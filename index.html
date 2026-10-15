@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>F1 起跑反應測試</title>
+<meta property="og:title" content="F1 起跑反應測試">
+<meta property="og:description" content="選車、按紅鍵，五燈熄滅瞬間再按，測你的起跑反應時間，看你站上頒獎台哪一階。">
+<meta property="og:type" content="website">
+<meta name="description" content="F1 起跑反應測試：選車、按紅鍵，五燈熄滅瞬間再按，測你的起跑反應時間。">
 <style>
   * { box-sizing: border-box; }
   html { height: 100%; }
@@ -378,18 +382,19 @@ const TIERS = [
   { min: 0,   max: 100, name: '超越人類極限', desc: '比燈還快，F1 會直接判偷跑。你大概是猜的。' },
   { min: 100, max: 150, name: '裁判盯上你了', desc: 'FIA 把車動低於 0.2s 視為可疑；這區間幾乎只有預判做得到。' },
   { min: 150, max: 200, name: '傳奇起跑', desc: 'Bottas 2017 奧地利 0.201s，對手質疑偷跑、FIA 判合法。你比他還快。' },
-  { min: 200, max: 250, name: 'F1 頂尖起跑者', desc: '轉播顯示頂尖起跑多落在 0.20–0.25s，F1 官方說車手平均約 0.2s。' },
+  { min: 200, max: 250, name: 'F1 頂尖起跑者', desc: '轉播顯示頂尖起跑多落在 0.20–0.24s，F1 官方說車手平均約 0.2s。' },
   { min: 250, max: 300, name: 'F1 車手水準', desc: '正規 F1 車手常見區間，能站上發車格。' },
   { min: 300, max: 350, name: '一般人平均', desc: '人類平均反應約 0.30s。' },
   { min: 350, max: 500, name: '起跑被超車', desc: '熄燈後慢半拍，旁邊的車已經先衝。' },
   { min: 500, max: Infinity, name: '還在看燈', desc: '多練幾次會進步，這很正常。' },
 ];
-function tierOf(rt) { return TIERS.find(t => rt >= t.min && rt < t.max); }
+// 依「畫面顯示的百分位秒數」分級，避免 0.196s 顯示 0.20 卻被歸到 0.15–0.19
+function tierOf(rt) { const r = Math.round(rt / 10) * 10; return TIERS.find(t => r >= t.min && r < t.max); }
 function grade(rt) { return tierOf(rt).name; }
 function renderLadder(rt) {
   document.getElementById('ladder').innerHTML = TIERS.map(t => {
-    const range = t.max === Infinity ? `${fmt(t.min)}s 以上` : `${fmt(t.min)}–${fmt(t.max)}s`;
-    const me = rt != null && rt >= t.min && rt < t.max ? ' me' : '';
+    const range = t.max === Infinity ? `${fmt(t.min)}s 以上` : `${fmt(t.min)}–${fmt(t.max - 10)}s`;
+    const me = rt != null && tierOf(rt) === t ? ' me' : '';
     return `<div class="tier${me}"><span class="r">${range}</span><span class="n">${t.name}${me ? '　← 你在這' : ''}</span><span class="d">${t.desc}</span></div>`;
   }).join('');
 }
