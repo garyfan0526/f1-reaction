@@ -61,11 +61,10 @@
   .car { background: #15151a; border: 2px solid #26262c; border-radius: 14px; padding: 14px 12px 10px; cursor: pointer; text-align: center; transition: transform .1s, border-color .1s; }
   .car:hover, .car:active { transform: translateY(-3px); border-color: var(--c); }
   .car svg { width: 100%; height: auto; display: block; }
-  .car .nm { margin-top: 8px; font-size: 16px; font-weight: 600; color: var(--c); }
-  .car .en { font-size: 11px; color: #666; letter-spacing: 1px; }
+  .car .nm { margin-top: 8px; font-size: 15px; font-weight: 800; letter-spacing: 2px; color: var(--c); }
   /* 標題旁的小車 */
   .mycar { display: flex; align-items: center; gap: 10px; margin: -10px 0 16px; color: #999; font-size: 13px; }
-  .mycar svg { width: 110px; height: auto; }
+  .mycar svg { width: 130px; height: auto; }
   .mycar a { color: #666; text-decoration: underline; cursor: pointer; font-size: 12px; }
   /* 結果區的車與名字 */
   .result-car { display: none; flex-direction: column; align-items: center; margin-top: 14px; }
@@ -130,42 +129,77 @@ let playerName = '';
 
 // 四台車：代表色，不是真車，只求一眼認得出來
 const CARS = [
-  { id: 'redbull',  name: '紅牛',   en: 'RED BULL', body: '#1e2a78', accent: '#ffd400', accent2: '#e8002d', wing: '#0f1540' },
-  { id: 'ferrari',  name: '法拉利', en: 'FERRARI',  body: '#dc0000', accent: '#ffffff', accent2: '#ffd400', wing: '#8a0000' },
-  { id: 'mclaren',  name: '麥拉倫', en: 'McLAREN',  body: '#ff8000', accent: '#111111', accent2: '#47c7fc', wing: '#1a1a1a' },
-  { id: 'mercedes', name: '賓士',   en: 'MERCEDES', body: '#c8ccd0', accent: '#00d2be', accent2: '#111111', wing: '#111111' },
+  // body 主色 / accent 主要點綴 / accent2 次要點綴 / dark 翼片與側箱深色 / tyre 輪胎側壁色帶
+  { id: 'redbull',  en: 'RED BULL', body: '#121f4e', accent: '#e10600', accent2: '#ffd300', dark: '#0a1232', text: '#ffffff' },
+  { id: 'ferrari',  en: 'FERRARI',  body: '#e8002d', accent: '#ffffff', accent2: '#ffd300', dark: '#9c0020', text: '#ffffff' },
+  { id: 'mclaren',  en: 'McLAREN',  body: '#ff8000', accent: '#1a1a1a', accent2: '#47c7fc', dark: '#2b2b2b', text: '#1a1a1a' },
+  { id: 'mercedes', en: 'MERCEDES', body: '#16181c', accent: '#00a19c', accent2: '#c0c4c8', dark: '#0a0a0c', text: '#00a19c' },
 ];
-const labelColor = c => c.accent === '#ffffff' ? c.body : c.accent;
-// 側面 F1 車剪影 SVG
+const labelColor = c => ({ redbull: '#e10600', ferrari: '#e8002d', mclaren: '#ff8000', mercedes: '#00a19c' })[c.id];
+// 側面 F1 車：地效世代比例（高鼻、側箱下切、寬尾翼）
 function carSVG(c) {
-  return `<svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="160" cy="100" rx="140" ry="5" fill="#000" opacity=".5"/>
-    <rect x="10" y="22" width="34" height="8" rx="2" fill="${c.wing}"/>
-    <rect x="12" y="30" width="6" height="30" fill="${c.wing}"/>
-    <rect x="8" y="36" width="38" height="7" rx="2" fill="${c.accent}"/>
-    <path d="M22 62 L60 50 L120 46 L150 40 L185 40 L215 50 L260 56 L300 60 L300 72 L22 72 Z" fill="${c.body}"/>
-    <path d="M60 50 L120 46 L150 40 L185 40 L215 50 L190 54 L120 56 Z" fill="${c.accent}" opacity=".85"/>
-    <path d="M90 56 L190 56 L200 72 L80 72 Z" fill="${c.wing}" opacity=".9"/>
-    <rect x="95" y="60" width="90" height="4" fill="${c.accent2}"/>
-    <path d="M150 40 L158 28 L185 28 L190 40 Z" fill="#111"/>
-    <path d="M152 36 Q170 18 192 36" stroke="#222" stroke-width="4" fill="none"/>
-    <circle cx="171" cy="34" r="5" fill="${c.accent}"/>
-    <path d="M140 42 L150 24 L158 28 L150 40 Z" fill="${c.body}"/>
-    <rect x="262" y="70" width="52" height="7" rx="2" fill="${c.wing}"/>
-    <rect x="268" y="64" width="46" height="4" rx="2" fill="${c.accent}"/>
-    <circle cx="68" cy="78" r="19" fill="#111"/><circle cx="68" cy="78" r="9" fill="#333"/><circle cx="68" cy="78" r="3" fill="${c.accent}"/>
-    <circle cx="248" cy="78" r="19" fill="#111"/><circle cx="248" cy="78" r="9" fill="#333"/><circle cx="248" cy="78" r="3" fill="${c.accent}"/>
-    <text x="112" y="68" font-size="9" font-weight="700" fill="#fff" font-family="Arial">${c.en}</text>
+  const id = 'g' + c.id;
+  return `<svg viewBox="0 0 400 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+    <radialGradient id="${id}t" cx=".4" cy=".4" r=".6"><stop offset="0" stop-color="#3a3a3a"/><stop offset="1" stop-color="#0d0d0d"/></radialGradient>
+  </defs>
+  <ellipse cx="200" cy="121" rx="178" ry="5" fill="#000" opacity=".55"/>
+  <!-- 尾翼 -->
+  <rect x="16" y="22" width="5" height="52" rx="1.5" fill="${c.dark}"/>
+  <rect x="10" y="30" width="52" height="8" rx="2" fill="${c.body}"/>
+  <rect x="12" y="22" width="48" height="6" rx="2" fill="${c.accent}"/>
+  <rect x="20" y="68" width="34" height="4" rx="1.5" fill="${c.dark}"/>
+  <!-- 底板 -->
+  <path d="M34 104 L340 104 L336 110 L40 110 Z" fill="#0b0b0b"/>
+  <!-- 懸吊 -->
+  <g stroke="#1c1c1c" stroke-width="3" stroke-linecap="round">
+    <line x1="68" y1="86" x2="92" y2="78"/><line x1="108" y1="86" x2="92" y2="78"/>
+    <line x1="292" y1="84" x2="310" y2="76"/><line x1="332" y1="86" x2="310" y2="76"/>
+  </g>
+  <!-- 車身主體 -->
+  <path d="M40 104 L46 82 C62 62 108 56 150 54 L158 46 Q168 40 178 44 L186 54 L222 60 C282 64 332 74 366 86 L370 96 L300 96 L268 104 Z" fill="${c.body}"/>
+  <path d="M40 104 L46 82 C62 62 108 56 150 54 L158 46 Q168 40 178 44 L186 54 L222 60 C282 64 332 74 366 86 L370 96 L300 96 L268 104 Z" fill="url(#${id}b)"/>
+  <!-- 引擎蓋鰭片與色條 -->
+  <path d="M48 80 C66 62 110 57 150 55 L148 60 C112 62 72 68 52 84 Z" fill="${c.accent}" opacity=".9"/>
+  <!-- 側箱（下切） -->
+  <path d="M104 74 L214 68 L224 86 L206 104 L126 104 L112 92 Z" fill="${c.dark}"/>
+  <path d="M110 78 L212 72 L218 80 L116 86 Z" fill="${c.accent2}" opacity=".9"/>
+  <!-- 側箱進氣口 -->
+  <path d="M212 68 L226 70 L230 80 L224 86 Z" fill="#050505"/>
+  <!-- 座艙與頭枕 -->
+  <path d="M186 54 L192 44 L214 46 L222 60 Z" fill="#070707"/>
+  <path d="M184 56 L190 52 L196 54 L192 60 Z" fill="${c.dark}"/>
+  <!-- 安全帽 -->
+  <circle cx="206" cy="51" r="6.5" fill="${c.accent2}"/>
+  <path d="M204 49 Q209 47 212 51 L211 54 Q207 53 204 52 Z" fill="#111"/>
+  <!-- Halo -->
+  <path d="M188 56 Q210 28 240 58" stroke="#1a1a1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <line x1="214" y1="40" x2="214" y2="52" stroke="#1a1a1a" stroke-width="4"/>
+  <!-- 鼻翼與前翼 -->
+  <rect x="300" y="100" width="92" height="6" rx="2" fill="${c.dark}"/>
+  <rect x="308" y="93" width="84" height="5" rx="2" fill="${c.accent}"/>
+  <rect x="316" y="87" width="72" height="4" rx="2" fill="${c.body}"/>
+  <rect x="388" y="82" width="5" height="26" rx="1.5" fill="${c.dark}"/>
+  <!-- 車輪 -->
+  <g>
+    <circle cx="90" cy="94" r="25" fill="url(#${id}t)"/><circle cx="90" cy="94" r="21" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+    <circle cx="90" cy="94" r="12" fill="#1f1f1f" stroke="#3a3a3a" stroke-width="2"/><circle cx="90" cy="94" r="4" fill="${c.accent}"/>
+    <circle cx="310" cy="94" r="25" fill="url(#${id}t)"/><circle cx="310" cy="94" r="21" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+    <circle cx="310" cy="94" r="12" fill="#1f1f1f" stroke="#3a3a3a" stroke-width="2"/><circle cx="310" cy="94" r="4" fill="${c.accent}"/>
+  </g>
+  <!-- 車隊字樣 -->
+  <text x="130" y="100" font-size="10" font-weight="800" letter-spacing="1" fill="${c.text}" font-family="Arial, Helvetica, sans-serif">${c.en}</text>
   </svg>`;
 }
 const overlay = document.getElementById('overlay');
 document.getElementById('cars').innerHTML = CARS.map(c =>
-  `<div class="car" data-id="${c.id}" style="--c:${labelColor(c)}">${carSVG(c)}<div class="nm">${c.name}</div><div class="en">${c.en}</div></div>`).join('');
+  `<div class="car" data-id="${c.id}" style="--c:${labelColor(c)}">${carSVG(c)}<div class="nm">${c.en}</div></div>`).join('');
 document.querySelectorAll('.car').forEach(el => el.addEventListener('click', () => chooseCar(el.dataset.id)));
 function chooseCar(id) {
   car = CARS.find(c => c.id === id);
   overlay.classList.add('hide');
-  document.getElementById('mycar').innerHTML = `${carSVG(car)}<div>你的車：<b style="color:#fff">${car.name}</b><br><a id="changeCar">換車</a></div>`;
+  document.getElementById('mycar').innerHTML = `${carSVG(car)}<div><b style="color:${labelColor(car)}">${car.en}</b><br><a id="changeCar">換車</a></div>`;
   document.getElementById('changeCar').addEventListener('click', () => { clearTimers(); setLights(0); state = 'idle'; show('<span class="dim">按紅色啟動鍵或空白鍵開始</span>'); hideResultExtras(); overlay.classList.remove('hide'); });
 }
 const resultCar = document.getElementById('resultCar'), namebox = document.getElementById('namebox'), nameInput = document.getElementById('nameInput');
@@ -215,7 +249,7 @@ function press() {
     updateStats();
     renderLadder(rt);
     lastRt = rt;
-    resultCar.innerHTML = `${carSVG(car)}<div class="team" style="color:${labelColor(car)}">${car.name}</div>`;
+    resultCar.innerHTML = `${carSVG(car)}<div class="team" style="color:${labelColor(car)}">${car.en}</div>`;
     resultCar.classList.add('show');
     nameInput.value = playerName;
     namebox.classList.add('show');
@@ -288,10 +322,10 @@ async function drawCard() {
   // 賽車
   const img = new Image();
   await new Promise(res => { img.onload = res; img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(carSVG(car)); });
-  g.drawImage(img, W / 2 - 180, 168, 360, 124);
+  g.drawImage(img, W / 2 - 200, 162, 400, 128);
   // 名字 + 車隊
   g.fillStyle = '#fff'; g.font = `700 30px ${font}`; g.textAlign = 'center';
-  g.fillText(`${playerName}　${car.name}`, W / 2, 322);
+  g.fillText(`${playerName}  ·  ${car.en}`, W / 2, 322);
   // 成績
   const color = lastRt < 200 ? '#3ddc84' : lastRt < 300 ? '#ffffff' : '#ff5252';
   g.fillStyle = color; g.font = `700 110px ${font}`;
@@ -319,7 +353,7 @@ async function shareResult() {
   const file = new File([blob], `f1-${playerName}-${fmt(lastRt)}s.png`, { type: 'image/png' });
   // 手機：系統分享面板（LINE、存到相簿…）
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'F1 五燈反應測試', text: `${playerName}（${car.name}）反應時間 ${fmt(lastRt)}s，${tierOf(lastRt).name}！` }); return; }
+    try { await navigator.share({ files: [file], title: 'F1 五燈反應測試', text: `${playerName}（${car.en}）反應時間 ${fmt(lastRt)}s，${tierOf(lastRt).name}！` }); return; }
     catch (e) { if (e.name === 'AbortError') return; }
   }
   // 電腦：直接下載 PNG
