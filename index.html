@@ -71,6 +71,7 @@
   .result-car.show { display: flex; }
   .result-car svg { width: min(320px, 80vw); height: auto; }
   .result-car .team { font-weight: 700; font-size: 18px; margin-top: 4px; }
+  .podium { width: min(420px, 92vw); margin-top: 10px; border-radius: 12px; background: #0f0f13; }
   .namebox { display: none; margin-top: 14px; align-items: center; gap: 8px; }
   .namebox.show { display: flex; }
   .namebox input { background: #15151a; border: 1px solid #333; color: #fff; padding: 9px 12px; border-radius: 8px; font-size: 16px; width: 170px; font-family: inherit; }
@@ -192,6 +193,82 @@ function carSVG(c) {
   <text x="130" y="100" font-size="10" font-weight="800" letter-spacing="1" fill="${c.text}" font-family="Arial, Helvetica, sans-serif">${c.en}</text>
   </svg>`;
 }
+// ===== 頒獎台（版本 B）：賽車服顏色跟車隊 =====
+function podiumSVG(tierIdx, c) {
+  const SUIT = c.body, HELM = labelColor(c), EDGE = c.id === 'mercedes' ? '#c0c4c8' : c.accent2, SKIN = '#f1c8a0';
+  const standing = (x, y, o = {}) => {
+    const arms = o.arms || 'down';
+    const aL = arms === 'up' ? 'M-8,-46 L-18,-70' : arms === 'clap' ? 'M-8,-46 L-4,-56' : 'M-8,-46 L-14,-26';
+    const aR = arms === 'up' ? 'M8,-46 L18,-70' : arms === 'clap' ? 'M8,-46 L4,-56' : 'M8,-46 L14,-26';
+    return `<g transform="translate(${x},${y})">
+      <circle cx="0" cy="-62" r="8" fill="${HELM}"/><rect x="-5" y="-62" width="10" height="4" fill="#111" rx="1"/>
+      <path d="M-8,-52 L8,-52 L7,-26 L-7,-26 Z" fill="${SUIT}" stroke="${EDGE}" stroke-width="1"/>
+      <path d="${aL}" stroke="${SUIT}" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="${aR}" stroke="${SUIT}" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M-5,-26 L-6,0 M5,-26 L6,0" stroke="${SUIT}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M-9,0 L-3,0 M3,0 L9,0" stroke="#222" stroke-width="4" stroke-linecap="round"/>
+      <rect x="-6" y="-44" width="12" height="3" fill="${EDGE}"/>
+      ${o.trophy ? trophy(arms === 'up' ? 0 : 18, arms === 'up' ? -88 : -34, o.trophy) : ''}
+      ${o.champagne ? champagne() : ''}
+    </g>`;
+  };
+  const sitting = (x, y, o = {}) => `<g transform="translate(${x},${y})">
+      <circle cx="4" cy="-34" r="8" fill="${HELM}"/>
+      <path d="M-8,-26 L8,-26 L8,-6 L-8,-6 Z" fill="${SUIT}" stroke="${EDGE}" stroke-width="1"/>
+      <path d="M8,-6 L26,-6 L30,0" stroke="${SUIT}" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M-8,-6 L-22,-6 L-26,0" stroke="${SUIT}" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M-6,-24 L-2,-12 M6,-24 L2,-12" stroke="${SUIT}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M26,0 L32,0 M-26,0 L-32,0" stroke="#222" stroke-width="4" stroke-linecap="round"/>
+      ${o.sweat ? '<path d="M14,-40 q3,-4 3,2 q0,3 -3,3 q-3,0 -3,-3 q0,-2 3,-2z" fill="#6cf"/>' : ''}
+      ${o.q ? '<text x="18" y="-44" font-size="16" fill="#888" font-weight="700">?</text>' : ''}
+    </g>`;
+  const lying = (x, y) => `<g transform="translate(${x},${y})">
+      <circle cx="-30" cy="-8" r="8" fill="${HELM}"/>
+      <rect x="-22" y="-12" width="30" height="10" fill="${SUIT}" rx="2" stroke="${EDGE}" stroke-width="1"/>
+      <path d="M8,-7 L30,-5 M8,-9 L30,-11" stroke="${SUIT}" stroke-width="5" stroke-linecap="round"/>
+      <path d="M30,-5 L36,-5 M30,-11 L36,-11" stroke="#222" stroke-width="4" stroke-linecap="round"/>
+      <path d="M-16,-12 L-14,-24" stroke="${SUIT}" stroke-width="5" stroke-linecap="round"/>
+      <text x="-44" y="-28" font-size="14" fill="#666">z z</text>
+    </g>`;
+  const trophy = (x, y, k = 1) => `<g transform="translate(${x},${y}) scale(${k})">
+      <path d="M-10,0 L10,0 L7,16 Q0,22 -7,16 Z" fill="#ffd700"/>
+      <path d="M-10,2 Q-18,6 -10,12 M10,2 Q18,6 10,12" stroke="#ffd700" stroke-width="3" fill="none"/>
+      <rect x="-3" y="20" width="6" height="5" fill="#ffd700"/><rect x="-8" y="25" width="16" height="3" fill="#b8860b"/>
+    </g>`;
+  const champagne = () => `<g><path d="M22,-62 L26,-78" stroke="#2a5c2a" stroke-width="5" stroke-linecap="round"/>
+      <g fill="#e9f2a0"><circle cx="34" cy="-92" r="2"/><circle cx="42" cy="-100" r="2.5"/><circle cx="48" cy="-88" r="2"/><circle cx="54" cy="-104" r="2"/><circle cx="40" cy="-84" r="1.5"/><circle cx="58" cy="-94" r="1.5"/></g></g>`;
+  const steward = (x, y, text) => `<g transform="translate(${x},${y})">
+      <circle cx="0" cy="-62" r="8" fill="${SKIN}"/><rect x="-9" y="-72" width="18" height="6" fill="#222" rx="2"/>
+      <path d="M-8,-52 L8,-52 L7,-26 L-7,-26 Z" fill="#dcdcdc"/>
+      <path d="M-5,-26 L-6,0 M5,-26 L6,0" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+      <path d="M8,-46 L22,-50" stroke="#dcdcdc" stroke-width="5" stroke-linecap="round"/>
+      <rect x="16" y="-78" width="44" height="26" fill="#fff" stroke="#999" rx="2"/>
+      <text x="38" y="-60" font-size="10" font-weight="800" fill="#c00" text-anchor="middle">${text}</text>
+      <rect x="37" y="-52" width="2" height="8" fill="#999"/>
+    </g>`;
+  const tag = (x, y, text, color = '#3ddc84') => `<g><rect x="${x - 36}" y="${y - 11}" width="72" height="16" rx="8" fill="${color}"/><text x="${x}" y="${y + 1}" font-size="9" font-weight="700" fill="#000" text-anchor="middle">${text}</text></g>`;
+  const ground = `<rect x="0" y="150" width="300" height="20" fill="#16161b"/>`;
+  const podium = `<g>
+      <rect x="62" y="108" width="58" height="42" fill="#2a2a32"/><text x="91" y="128" font-size="16" font-weight="800" fill="#c0c0c0" text-anchor="middle">2</text>
+      <rect x="120" y="90" width="60" height="60" fill="#34343e"/><text x="150" y="110" font-size="18" font-weight="800" fill="#ffd700" text-anchor="middle">1</text>
+      <rect x="180" y="122" width="58" height="28" fill="#2a2a32"/><text x="209" y="140" font-size="16" font-weight="800" fill="#cd7f32" text-anchor="middle">3</text>
+    </g>`;
+  const office = `<rect x="8" y="118" width="52" height="32" fill="#1f1f26"/><rect x="6" y="114" width="56" height="5" fill="#3a3a44"/><text x="34" y="106" font-size="8" fill="#888" text-anchor="middle">STEWARDS</text>`;
+  let fig = '', note = '';
+  switch (tierIdx) {
+    case 0: fig = office + sitting(26, 150, { q: true }) + steward(60, 150, 'DSQ'); note = tag(34, 22, '取消資格', '#ff5252'); break;
+    case 1: fig = office + sitting(26, 150, { sweat: true }) + steward(60, 150, '調查中'); note = tag(34, 22, '裁判審查', '#ffb300'); break;
+    case 2: fig = standing(150, 90, { arms: 'up', trophy: 1, champagne: true }); note = tag(150, 22, '冠軍'); break;
+    case 3: fig = standing(91, 108, { arms: 'down', trophy: .8 }); note = tag(91, 22, '亞軍', '#c0c0c0'); break;
+    case 4: fig = standing(209, 122, { arms: 'down', trophy: .7 }); note = tag(209, 22, '季軍', '#cd7f32'); break;
+    case 5: fig = standing(262, 150, { arms: 'clap' }); note = tag(262, 22, '台下鼓掌', '#9aa'); break;
+    case 6: fig = sitting(268, 150, { sweat: true }); note = tag(268, 22, '坐地失落', '#778'); break;
+    default: fig = lying(262, 150); note = tag(262, 22, '躺平', '#667'); break;
+  }
+  return `<svg class="podium" viewBox="0 0 300 170" xmlns="http://www.w3.org/2000/svg">${ground}${podium}${fig}${note}</svg>`;
+}
+const tierIndex = rt => TIERS.indexOf(tierOf(rt));
+
 const overlay = document.getElementById('overlay');
 document.getElementById('cars').innerHTML = CARS.map(c =>
   `<div class="car" data-id="${c.id}" style="--c:${labelColor(c)}">${carSVG(c)}<div class="nm">${c.en}</div></div>`).join('');
@@ -249,7 +326,7 @@ function press() {
     updateStats();
     renderLadder(rt);
     lastRt = rt;
-    resultCar.innerHTML = `${carSVG(car)}<div class="team" style="color:${labelColor(car)}">${car.en}</div>`;
+    resultCar.innerHTML = `${carSVG(car)}<div class="team" style="color:${labelColor(car)}">${car.en}</div>${podiumSVG(tierIndex(rt), car)}`;
     resultCar.classList.add('show');
     nameInput.value = playerName;
     namebox.classList.add('show');
@@ -311,6 +388,7 @@ async function drawCard() {
   const best = Math.min(...results), avg = results.reduce((a, b) => a + b, 0) / results.length;
   const font = '"Segoe UI","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC",sans-serif';
   const rr = (x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r); };
+  const loadSVG = svg => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); });
 
   // 背景
   const bg = g.createLinearGradient(0, 0, 0, H);
@@ -318,63 +396,66 @@ async function drawCard() {
   g.fillStyle = bg; g.fillRect(0, 0, W, H);
 
   // 標題
-  g.textAlign = 'center'; g.fillStyle = '#9a9aa2'; g.font = `600 44px ${font}`;
-  g.fillText('F1 五燈反應測試', W / 2, 150);
+  g.textAlign = 'center'; g.fillStyle = '#9a9aa2'; g.font = `600 40px ${font}`;
+  g.fillText('F1 五燈反應測試', W / 2, 120);
 
   // 燈架：全亮紅燈＋光暈
-  const gx = 90, gy = 210, gw = W - 180, gh = 330;
-  g.fillStyle = '#1a1a1f'; rr(gx, gy, gw, gh, 28); g.fill();
+  const gx = 110, gy = 160, gw = W - 220, gh = 250;
+  g.fillStyle = '#1a1a1f'; rr(gx, gy, gw, gh, 24); g.fill();
   g.strokeStyle = '#2c2c33'; g.lineWidth = 3; g.stroke();
-  const lampR = 56, colGap = gw / 5;
+  const lampR = 42, colGap = gw / 5;
   for (let i = 0; i < 5; i++) for (let j = 0; j < 2; j++) {
-    const x = gx + colGap * (i + 0.5), y = gy + 100 + j * 140;
-    g.save();
-    g.shadowColor = '#ff1e1e'; g.shadowBlur = 60;
-    g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.fillStyle = '#ff1e1e'; g.fill();
-    g.restore();
-    g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.lineWidth = 6; g.strokeStyle = '#111'; g.stroke();
-    const hl = g.createRadialGradient(x - 18, y - 20, 4, x, y, lampR);
+    const x = gx + colGap * (i + 0.5), y = gy + 72 + j * 106;
+    g.save(); g.shadowColor = '#ff1e1e'; g.shadowBlur = 50;
+    g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.fillStyle = '#ff1e1e'; g.fill(); g.restore();
+    g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.lineWidth = 5; g.strokeStyle = '#111'; g.stroke();
+    const hl = g.createRadialGradient(x - 14, y - 16, 3, x, y, lampR);
     hl.addColorStop(0, 'rgba(255,255,255,.55)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
     g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.fillStyle = hl; g.fill();
   }
 
   // 賽車
-  const img = new Image();
-  await new Promise(res => { img.onload = res; img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(carSVG(car)); });
-  const cw = 820, ch = cw * 128 / 400;
-  g.drawImage(img, (W - cw) / 2, 600, cw, ch);
+  const carImg = await loadSVG(carSVG(car));
+  const cw = 680, ch = cw * 128 / 400;
+  g.drawImage(carImg, (W - cw) / 2, 440, cw, ch);
+
+  // 頒獎台
+  const podImg = await loadSVG(podiumSVG(tierIndex(lastRt), car).replace(' class="podium"', ''));
+  const pw = 760, ph = pw * 170 / 300;
+  rr((W - pw) / 2 - 16, 680 - 16, pw + 32, ph + 32, 20); g.fillStyle = '#0f0f13'; g.fill();
+  g.drawImage(podImg, (W - pw) / 2, 680, pw, ph);
 
   // 名字 · 車隊
-  g.fillStyle = '#fff'; g.font = `700 60px ${font}`;
-  g.fillText(playerName, W / 2, 930);
-  g.fillStyle = labelColor(car); g.font = `800 44px ${font}`;
-  g.fillText(car.en, W / 2, 995);
+  g.fillStyle = '#fff'; g.font = `700 56px ${font}`;
+  g.fillText(playerName, W / 2, 1210);
+  g.fillStyle = labelColor(car); g.font = `800 40px ${font}`;
+  g.fillText(car.en, W / 2, 1262);
 
   // 成績
   const color = lastRt < 200 ? '#3ddc84' : lastRt < 300 ? '#ffffff' : '#ff5252';
-  g.fillStyle = color; g.font = `800 230px ${font}`;
-  g.fillText(`${fmt(lastRt)}s`, W / 2, 1240);
+  g.fillStyle = color; g.font = `800 190px ${font}`;
+  g.fillText(`${fmt(lastRt)}s`, W / 2, 1450);
 
   // 等級
-  g.fillStyle = '#3ddc84'; g.font = `700 64px ${font}`;
-  g.fillText(t.name, W / 2, 1345);
-  g.fillStyle = '#8a8a92'; g.font = `34px ${font}`;
-  wrapText(g, t.desc, W / 2, 1410, W - 200, 48);
+  g.fillStyle = '#3ddc84'; g.font = `700 56px ${font}`;
+  g.fillText(t.name, W / 2, 1535);
+  g.fillStyle = '#8a8a92'; g.font = `30px ${font}`;
+  wrapText(g, t.desc, W / 2, 1585, W - 200, 42);
 
   // 統計列
-  rr(120, 1560, W - 240, 150, 24); g.fillStyle = '#15151a'; g.fill();
+  rr(120, 1680, W - 240, 130, 22); g.fillStyle = '#15151a'; g.fill();
   const cols = [['最佳', `${fmt(best)}s`], ['平均', `${fmt(avg)}s`], ['次數', `${results.length}`]];
   cols.forEach(([k, v], i) => {
     const x = 120 + (W - 240) / 6 * (2 * i + 1);
-    g.fillStyle = '#8a8a92'; g.font = `30px ${font}`; g.fillText(k, x, 1612);
-    g.fillStyle = '#fff'; g.font = `700 48px ${font}`; g.fillText(v, x, 1676);
+    g.fillStyle = '#8a8a92'; g.font = `28px ${font}`; g.fillText(k, x, 1726);
+    g.fillStyle = '#fff'; g.font = `700 44px ${font}`; g.fillText(v, x, 1782);
   });
 
   // 日期與署名
-  g.textAlign = 'left'; g.fillStyle = '#55555c'; g.font = `26px ${font}`;
-  g.fillText(new Date().toLocaleString('zh-TW', { hour12: false }), 90, H - 60);
-  g.textAlign = 'right'; g.font = `24px ${font}`;
-  g.fillText('Generated by Gary Fan', W - 90, H - 60);
+  g.textAlign = 'left'; g.fillStyle = '#55555c'; g.font = `24px ${font}`;
+  g.fillText(new Date().toLocaleString('zh-TW', { hour12: false }), 90, H - 50);
+  g.textAlign = 'right'; g.font = `22px ${font}`;
+  g.fillText('Generated by Gary Fan', W - 90, H - 50);
   return c;
 }
 function wrapText(g, text, x, y, maxW, lh) {
