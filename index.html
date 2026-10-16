@@ -3,61 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>F1 起跑反應測試</title>
-<meta property="og:title" content="F1 起跑反應測試">
-<meta property="og:description" content="選車、按紅鍵，五燈熄滅瞬間再按，測你的起跑反應時間，看你站上頒獎台哪一階。">
+<title>F1 車手體檢</title>
+<meta property="og:title" content="F1 車手體檢">
+<meta property="og:description" content="選車、闖關：起跑反應、反應燈板…測你的車手反應，看總分能站上頒獎台哪一階。">
 <meta property="og:type" content="website">
-<meta name="description" content="F1 起跑反應測試：選車、按紅鍵，五燈熄滅瞬間再按，測你的起跑反應時間。">
+<meta name="description" content="F1 車手體檢：起跑反應、反應燈板等關卡，總分決定頒獎台位置。">
 <style>
   * { box-sizing: border-box; }
   html { height: 100%; }
   body {
-    min-height: 100%; margin: 0; padding: 28px 0 40px;
+    min-height: 100%; margin: 0; padding: 24px 0 40px;
     background: #0b0b0e; color: #eee; font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    display: flex; flex-direction: column; align-items: center;
     user-select: none; -webkit-tap-highlight-color: transparent;
   }
   body > * { flex-shrink: 0; }
-  h1 { font-weight: 600; letter-spacing: 2px; margin: 0 0 24px; font-size: 22px; color: #bbb; }
-  .gantry { background: #1a1a1f; padding: 24px 28px; border-radius: 14px; box-shadow: 0 10px 40px #000; display: flex; gap: 22px; }
-  .col { display: flex; flex-direction: column; gap: 14px; }
-  .lamp { width: 64px; height: 64px; border-radius: 50%; background: #2a2a30; border: 4px solid #111; transition: background .05s; }
-  .col.on .lamp { background: #ff1e1e; box-shadow: 0 0 22px #ff1e1e, 0 0 50px #ff000080; }
-  /* F1 方向盤風格紅色啟動鍵 */
-  .start-wrap { margin-top: 26px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .start {
-    width: 120px; height: 120px; border-radius: 50%; border: 0; cursor: pointer; touch-action: none;
-    background: radial-gradient(circle at 38% 32%, #ff6b6b 0%, #e60000 45%, #8f0000 100%);
-    box-shadow: 0 0 0 7px #2a2a30, 0 0 0 10px #55555e, 0 10px 24px #000, inset 0 -6px 12px #5a0000, inset 0 4px 8px #ff9a9a80;
-    color: #fff; font-weight: 800; font-size: 18px; letter-spacing: 2px; font-family: inherit;
-    transition: transform .05s, box-shadow .05s;
-  }
-  .start:active, .start.down {
-    transform: translateY(3px);
-    box-shadow: 0 0 0 7px #2a2a30, 0 0 0 10px #55555e, 0 4px 10px #000, inset 0 -2px 6px #5a0000, inset 0 6px 12px #3a0000;
-  }
-  .start:focus-visible { outline: 2px solid #3ddc84; outline-offset: 14px; }
-  .start small { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; opacity: .85; margin-top: 2px; }
-  .status { margin-top: 24px; font-size: 28px; min-height: 110px; text-align: center; }
-  .time { font-size: 64px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  h1 { font-weight: 600; letter-spacing: 2px; margin: 0 0 14px; font-size: 22px; color: #bbb; }
+  h1 small { display: block; font-size: 12px; color: #666; letter-spacing: 1px; font-weight: 500; margin-top: 4px; }
+  .screen { display: none; flex-direction: column; align-items: center; width: 100%; }
+  .screen.show { display: flex; }
   .ok { color: #3ddc84; } .bad { color: #ff5252; } .dim { color: #888; font-size: 18px; }
-  .stats { margin-top: 18px; display: flex; gap: 30px; color: #aaa; font-size: 15px; }
-  .stats b { color: #fff; font-size: 20px; }
-  .hint { margin-top: 26px; color: #666; font-size: 14px; }
-  .ladder { margin-top: 22px; width: min(560px, 92vw); border-radius: 10px; overflow: hidden; border: 1px solid #26262c; }
-  .tier { display: grid; grid-template-columns: 110px 1fr; gap: 10px; padding: 7px 12px; font-size: 13px; color: #888; border-bottom: 1px solid #1c1c22; background: #121216; }
-  .tier:last-child { border-bottom: 0; }
-  .tier .r { font-variant-numeric: tabular-nums; color: #aaa; }
-  .tier .n { color: #ccc; }
-  .tier .d { grid-column: 2; font-size: 11px; color: #666; }
-  .tier.me { background: #1f2a1f; border-left: 4px solid #3ddc84; color: #fff; }
-  .tier.me .n, .tier.me .r { color: #fff; font-weight: 600; }
-  .tier.me .d { color: #9fd9b4; }
-  .btn { margin-top: 14px; padding: 10px 22px; border-radius: 999px; border: 1px solid #3ddc84; background: transparent; color: #3ddc84; font-size: 15px; cursor: pointer; display: none; }
+  .linkbtn { color: #777; text-decoration: underline; cursor: pointer; font-size: 13px; background: none; border: 0; font-family: inherit; }
+  .btn { margin-top: 14px; padding: 10px 22px; border-radius: 999px; border: 1px solid #3ddc84; background: transparent; color: #3ddc84; font-size: 15px; cursor: pointer; font-family: inherit; }
   .btn:hover { background: #3ddc8422; }
-  .btn.show { display: inline-block; }
-  .note { margin-top: 8px; color: #555; font-size: 11px; width: min(560px, 92vw); text-align: center; }
-  /* 選車畫面 */
+  .btn.solid { background: #3ddc84; color: #000; font-weight: 700; }
+  .btn.ghost { border-color: #444; color: #aaa; }
+  .btn[disabled] { opacity: .35; cursor: default; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  /* 選車 */
   .overlay { position: fixed; inset: 0; background: #0b0b0ef2; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
   .overlay.hide { display: none; }
   .overlay h2 { margin: 0 0 18px; font-weight: 600; letter-spacing: 2px; color: #ddd; font-size: 22px; }
@@ -66,21 +39,74 @@
   .car:hover, .car:active { transform: translateY(-3px); border-color: var(--c); }
   .car svg { width: 100%; height: auto; display: block; }
   .car .nm { margin-top: 8px; font-size: 15px; font-weight: 800; letter-spacing: 2px; color: var(--c); }
-  /* 標題旁的小車 */
-  .mycar { display: flex; align-items: center; gap: 10px; margin: -10px 0 16px; color: #999; font-size: 13px; }
+  .mycar { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; color: #999; font-size: 13px; }
   .mycar svg { width: 130px; height: auto; }
-  .mycar a { color: #666; text-decoration: underline; cursor: pointer; font-size: 12px; }
-  /* 結果區的車與名字 */
-  .result-car { display: none; flex-direction: column; align-items: center; margin-top: 14px; }
-  .result-car.show { display: flex; }
-  .result-car svg { width: min(320px, 80vw); height: auto; }
+  /* 關卡選單 */
+  .stages { display: grid; grid-template-columns: 1fr; gap: 12px; width: min(420px, 92vw); }
+  .stage { background: #15151a; border: 2px solid #26262c; border-radius: 14px; padding: 14px 16px; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; }
+  .stage:hover, .stage:active { border-color: #3ddc84; }
+  .stage .sn { font-size: 18px; font-weight: 700; color: #fff; }
+  .stage .sd { grid-column: 1; font-size: 12px; color: #777; }
+  .stage .sb { grid-row: 1 / span 2; text-align: right; font-size: 13px; color: #888; }
+  .stage .sb b { display: block; font-size: 22px; color: #3ddc84; }
+  .stage .sb .tn { color: #bbb; font-size: 12px; }
+  .total { margin-top: 20px; text-align: center; color: #888; font-size: 14px; }
+  .total b { display: block; font-size: 46px; color: #fff; font-weight: 800; line-height: 1.1; }
+  /* 共用：紅鍵 */
+  .start-wrap { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .start {
+    width: 120px; height: 120px; border-radius: 50%; border: 0; cursor: pointer; touch-action: none;
+    background: radial-gradient(circle at 38% 32%, #ff6b6b 0%, #e60000 45%, #8f0000 100%);
+    box-shadow: 0 0 0 7px #2a2a30, 0 0 0 10px #55555e, 0 10px 24px #000, inset 0 -6px 12px #5a0000, inset 0 4px 8px #ff9a9a80;
+    color: #fff; font-weight: 800; font-size: 18px; letter-spacing: 2px; font-family: inherit;
+    transition: transform .05s, box-shadow .05s;
+  }
+  .start:active, .start.down { transform: translateY(3px); box-shadow: 0 0 0 7px #2a2a30, 0 0 0 10px #55555e, 0 4px 10px #000, inset 0 -2px 6px #5a0000, inset 0 6px 12px #3a0000; }
+  .start small { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; opacity: .85; margin-top: 2px; }
+  .status { margin-top: 22px; font-size: 28px; min-height: 110px; text-align: center; }
+  .time { font-size: 64px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .score { font-size: 15px; color: #3ddc84; margin-top: 4px; }
+  /* 關卡 1：五燈 */
+  .gantry { background: #1a1a1f; padding: 24px 28px; border-radius: 14px; box-shadow: 0 10px 40px #000; display: flex; gap: 22px; }
+  .col { display: flex; flex-direction: column; gap: 14px; }
+  .lamp { width: 64px; height: 64px; border-radius: 50%; background: #2a2a30; border: 4px solid #111; transition: background .05s; }
+  .col.on .lamp { background: #ff1e1e; box-shadow: 0 0 22px #ff1e1e, 0 0 50px #ff000080; }
+  /* 關卡 2：燈板 */
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(340px, 86vw); background: #1a1a1f; padding: 16px; border-radius: 14px; box-shadow: 0 10px 40px #000; touch-action: none; }
+  .cell { aspect-ratio: 1; border-radius: 50%; background: #2a2a30; border: 4px solid #111; transition: background .04s; }
+  .cell.on { background: #ff1e1e; box-shadow: 0 0 22px #ff1e1e, 0 0 50px #ff000080; }
+  .cell.hit { background: #3ddc84; box-shadow: 0 0 18px #3ddc84; }
+  .hud { display: flex; gap: 26px; margin-top: 14px; color: #888; font-size: 14px; }
+  .hud b { color: #fff; font-size: 24px; display: block; font-variant-numeric: tabular-nums; }
+  /* 階梯 */
+  .ladder { margin-top: 18px; width: min(560px, 92vw); border-radius: 10px; overflow: hidden; border: 1px solid #26262c; }
+  .tier { display: grid; grid-template-columns: 110px 1fr; gap: 10px; padding: 7px 12px; font-size: 13px; color: #888; border-bottom: 1px solid #1c1c22; background: #121216; }
+  .tier:last-child { border-bottom: 0; }
+  .tier .r { font-variant-numeric: tabular-nums; color: #aaa; }
+  .tier .n { color: #ccc; }
+  .tier .d { grid-column: 2; font-size: 11px; color: #666; }
+  .tier.me { background: #1f2a1f; border-left: 4px solid #3ddc84; color: #fff; }
+  .tier.me .n, .tier.me .r { color: #fff; font-weight: 600; }
+  .tier.me .d { color: #9fd9b4; }
+  /* 頒獎台頁 */
+  .final-score { text-align: center; color: #888; font-size: 14px; margin-top: 4px; }
+  .final-score b { display: block; font-size: 72px; color: #fff; font-weight: 800; line-height: 1.1; }
+  .result-car { display: flex; flex-direction: column; align-items: center; margin-top: 8px; }
+  .result-car svg.carsvg { width: min(320px, 80vw); height: auto; }
   .result-car .team { font-weight: 700; font-size: 18px; margin-top: 4px; }
   .podium { width: min(420px, 92vw); margin-top: 10px; border-radius: 12px; background: #0f0f13; }
+  .breakdown { width: min(420px, 92vw); margin-top: 14px; border: 1px solid #26262c; border-radius: 10px; overflow: hidden; }
+  .bk { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 9px 14px; background: #121216; border-bottom: 1px solid #1c1c22; font-size: 14px; color: #bbb; }
+  .bk:last-child { border-bottom: 0; }
+  .bk .v { color: #fff; font-variant-numeric: tabular-nums; }
+  .bk .p { color: #3ddc84; font-weight: 700; min-width: 48px; text-align: right; }
+  .bk.none { color: #555; } .bk.none .v, .bk.none .p { color: #555; }
   .namebox { display: none; margin-top: 14px; align-items: center; gap: 8px; }
   .namebox.show { display: flex; }
   .namebox input { background: #15151a; border: 1px solid #333; color: #fff; padding: 9px 12px; border-radius: 8px; font-size: 16px; width: 170px; font-family: inherit; }
   .namebox input:focus { outline: 1px solid #3ddc84; }
   .namebox button { padding: 9px 16px; border-radius: 8px; border: 0; background: #3ddc84; color: #000; font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; }
+  #shot { display: none; } #shot.show { display: inline-block; }
   .sig { position: fixed; right: 10px; bottom: 6px; font-size: 10px; color: #555; }
   @media (max-width: 520px) { .lamp { width: 44px; height: 44px; } .gantry { gap: 12px; padding: 16px; } .time { font-size: 48px; } }
 </style>
@@ -90,47 +116,62 @@
     <h2>選擇你的賽車</h2>
     <div class="cars" id="cars"></div>
   </div>
-  <h1>F1 起跑反應測試</h1>
+
+  <h1 id="h1">F1 車手體檢<small id="h1sub"></small></h1>
   <div class="mycar" id="mycar"></div>
-  <div class="gantry" id="gantry">
-    <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
-    <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
-    <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
-    <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
-    <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
-  </div>
-  <div class="start-wrap">
-    <button class="start" id="startBtn" aria-label="啟動">START<small>PUSH</small></button>
-  </div>
-  <div class="status" id="status"><span class="dim">按紅色啟動鍵或空白鍵開始</span></div>
-  <div class="stats">
-    <div>最佳 <b id="best">--</b> s</div>
-    <div>平均 <b id="avg">--</b> s</div>
-    <div>次數 <b id="count">0</b></div>
-  </div>
-  <div class="result-car" id="resultCar"></div>
-  <div class="namebox" id="namebox">
-    <input id="nameInput" type="text" maxlength="12" placeholder="輸入你的名字" autocomplete="off">
-    <button id="nameOk">確定</button>
-  </div>
-  <button class="btn" id="shot">📷 截圖分享成績</button>
-  <div class="ladder" id="ladder"></div>
+
+  <!-- 關卡選單 -->
+  <section class="screen" id="scrMenu">
+    <div class="stages" id="stages"></div>
+    <div class="total">目前總分<b id="totalScore">--</b><span id="totalHint">完成任一關即可看頒獎台</span></div>
+    <div class="row">
+      <button class="btn solid" id="toFinal">看頒獎台</button>
+    </div>
+    <button class="linkbtn" id="resetAll" style="margin-top:18px">重新開始（清除成績）</button>
+  </section>
+
+  <!-- 關卡 1：起跑反應 -->
+  <section class="screen" id="scrStart">
+    <div class="gantry">
+      <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
+      <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
+      <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
+      <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
+      <div class="col"><div class="lamp"></div><div class="lamp"></div></div>
+    </div>
+    <div class="start-wrap"><button class="start" id="startBtn" aria-label="啟動">START<small>PUSH</small></button></div>
+    <div class="status" id="statusStart"><span class="dim">按紅鍵開始，五燈熄滅瞬間再按</span></div>
+    <div class="row"><button class="btn ghost" data-back>回選單</button></div>
+    <div class="ladder" id="ladderStart"></div>
+  </section>
+
+  <!-- 關卡 2：反應燈板 -->
+  <section class="screen" id="scrBatak">
+    <div class="board" id="board"></div>
+    <div class="hud"><div>剩餘<b id="bkTime">10.0</b></div><div>打中<b id="bkHits">0</b></div><div>誤點<b id="bkMiss">0</b></div></div>
+    <div class="start-wrap"><button class="start" id="batakBtn" aria-label="啟動">START<small>PUSH</small></button></div>
+    <div class="status" id="statusBatak"><span class="dim">按紅鍵開始，10 秒內點掉亮起的燈</span></div>
+    <div class="row"><button class="btn ghost" data-back>回選單</button></div>
+    <div class="ladder" id="ladderBatak"></div>
+  </section>
+
+  <!-- 頒獎台 -->
+  <section class="screen" id="scrFinal">
+    <div class="final-score">總分<b id="finalScore">--</b><span id="finalGrade"></span></div>
+    <div class="result-car" id="resultCar"></div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="namebox" id="namebox">
+      <input id="nameInput" type="text" maxlength="12" placeholder="輸入你的名字" autocomplete="off">
+      <button id="nameOk">確定</button>
+    </div>
+    <button class="btn" id="shot">📷 截圖分享成績</button>
+    <div class="row"><button class="btn ghost" data-back>回選單</button></div>
+  </section>
+
   <div class="sig">Generated by Gary Fan</div>
 
 <script>
-const cols = [...document.querySelectorAll('.col')];
-const statusEl = document.getElementById('status');
-const bestEl = document.getElementById('best'), avgEl = document.getElementById('avg'), countEl = document.getElementById('count');
-
-// 狀態機：idle → lighting(亮燈中) → armed(全亮，等隨機延遲) → go(已熄滅，計時中) → result
-let state = 'idle';
-let timers = [];
-let lightsOutAt = 0;
-let results = [];
-let car = null;        // 目前選的車
-let playerName = '';
-
-// 四台車：代表色，不是真車，只求一眼認得出來
+// ============ 車、安全帽、頒獎台 SVG ============
 const CARS = [
   // body 主色 / accent 主要點綴 / accent2 次要點綴 / dark 翼片與側箱深色 / tyre 輪胎側壁色帶
   { id: 'redbull',  en: 'RED BULL', body: '#121f4e', accent: '#e10600', accent2: '#ffd300', dark: '#0a1232', text: '#ffffff' },
@@ -309,234 +350,343 @@ function podiumSVG(tierIdx, c) {
   }
   return `<svg class="podium" viewBox="0 -40 300 210" xmlns="http://www.w3.org/2000/svg"><defs>${gold}</defs>${ground}${podium}${fig}${note}</svg>`;
 }
-const tierIndex = rt => TIERS.indexOf(tierOf(rt));
 
+
+// ============ 關卡定義 ============
+// 8 級 → 固定分數（所有關卡共用）；前兩級另外標記 DSQ / 調查中
+const TIER_POINTS = [0, 50, 100, 85, 70, 50, 30, 10];
+const TIER_FLAG = ['dsq', 'sus', '', '', '', '', '', ''];
+const fmt = ms => (ms / 1000).toFixed(2);
+
+const STAGES = [
+  {
+    id: 'start', name: '起跑反應', desc: '五燈熄滅瞬間按下，測純反應時間', better: 'low',
+    fmtValue: v => `${fmt(v)}s`,
+    // 以顯示的百分位秒數分級（內部 ms 先四捨五入到 10ms）
+    norm: v => Math.round(v / 10) * 10,
+    tiers: [
+      { min: 0,   max: 100, name: '超越人類極限', desc: '比燈還快，F1 會直接判偷跑。你大概是猜的。' },
+      { min: 100, max: 150, name: '裁判盯上你了', desc: 'FIA 把車動低於 0.2s 視為可疑；這區間幾乎只有預判做得到。' },
+      { min: 150, max: 200, name: '傳奇起跑', desc: 'Bottas 2017 奧地利 0.201s，對手質疑偷跑、FIA 判合法。你比他還快。' },
+      { min: 200, max: 250, name: 'F1 頂尖起跑者', desc: '轉播顯示頂尖起跑多落在 0.20–0.24s，F1 官方說車手平均約 0.2s。' },
+      { min: 250, max: 300, name: 'F1 車手水準', desc: '正規 F1 車手常見區間，能站上發車格。' },
+      { min: 300, max: 350, name: '一般人平均', desc: '人類平均反應約 0.30s。' },
+      { min: 350, max: 500, name: '起跑被超車', desc: '熄燈後慢半拍，旁邊的車已經先衝。' },
+      { min: 500, max: Infinity, name: '還在看燈', desc: '多練幾次會進步，這很正常。' },
+    ],
+    range: t => t.max === Infinity ? `${fmt(t.min)}s 以上` : `${fmt(t.min)}–${fmt(t.max - 10)}s`,
+  },
+  {
+    id: 'batak', name: '反應燈板', desc: '九宮格隨機亮燈，10 秒內點掉越多越好', better: 'high',
+    fmtValue: v => `${v} 顆`,
+    norm: v => v,
+    // 門檻為估計值（Batak 牆面成績扣掉手臂移動換算到手機），待實測校準
+    tiers: [
+      { min: 40, max: Infinity, name: '外掛疑雲', desc: '比金氏紀錄換算到手機還快，像是用兩隻手。' },
+      { min: 33, max: 40, name: '裁判盯上你了', desc: '快到可疑，裁判要看重播。' },
+      { min: 28, max: 33, name: '金氏紀錄級', desc: 'Button 30 秒 58 顆（0.52s/顆），換算到手機約 0.32s/顆。' },
+      { min: 24, max: 28, name: 'F1 頂尖反應', desc: '車隊訓練前段班的水準。' },
+      { min: 20, max: 24, name: 'F1 車手水準', desc: '正規車手訓練常見成績。' },
+      { min: 16, max: 20, name: '一般人平均', desc: '一般成人在燈板上的換算水準。' },
+      { min: 12, max: 16, name: '慢半拍', desc: '看到燈才想動，手還沒跟上。' },
+      { min: 0,  max: 12, name: '還在找燈', desc: '多練幾次會進步，這很正常。' },
+    ],
+    range: t => t.max === Infinity ? `${t.min} 顆以上` : t.min === 0 ? `${t.max - 1} 顆以下` : `${t.min}–${t.max - 1} 顆`,
+  },
+];
+const stageById = id => STAGES.find(s => s.id === id);
+function tierIdxOf(stage, v) { const n = stage.norm(v); return stage.tiers.findIndex(t => n >= t.min && n < t.max); }
+
+// ============ 狀態與儲存 ============
+let car = null, playerName = '';
+let best = {};   // { stageId: { value, tier, points } }
+const SAVE_KEY = 'f1check_v1';
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify({ car: car && car.id, playerName, best })); } catch (e) {} }
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+    playerName = d.playerName || ''; best = d.best || {};
+    if (d.car) chooseCar(d.car, true);
+  } catch (e) {}
+}
+function recordResult(stage, value) {
+  const tier = tierIdxOf(stage, value), points = TIER_POINTS[tier];
+  const cur = best[stage.id];
+  const isBetter = !cur || points > cur.points || (points === cur.points && (stage.better === 'low' ? value < cur.value : value > cur.value));
+  if (isBetter) best[stage.id] = { value, tier, points };
+  save();
+  return { tier, points, isBest: isBetter };
+}
+function totalScore() {
+  const played = STAGES.filter(s => best[s.id]);
+  if (!played.length) return null;
+  return Math.round(played.reduce((a, s) => a + best[s.id].points, 0) / played.length);
+}
+// 總分 → 頒獎台位置（0 裁判室 DSQ、1 調查中、2 冠軍 … 7 躺平）
+function podiumIdx() {
+  const flags = STAGES.filter(s => best[s.id]).map(s => TIER_FLAG[best[s.id].tier]);
+  if (flags.includes('dsq')) return 0;
+  if (flags.includes('sus')) return 1;
+  const t = totalScore();
+  return t >= 90 ? 2 : t >= 80 ? 3 : t >= 65 ? 4 : t >= 45 ? 5 : t >= 25 ? 6 : 7;
+}
+const PODIUM_NAME = ['取消資格', '裁判審查中', '冠軍', '亞軍', '季軍', '台下鼓掌', '坐地失落', '躺平'];
+
+// ============ 畫面切換 ============
+const screens = { menu: 'scrMenu', start: 'scrStart', batak: 'scrBatak', final: 'scrFinal' };
+let current = 'menu';
+function go(name) {
+  stopStart(); stopBatak();
+  Object.values(screens).forEach(id => document.getElementById(id).classList.remove('show'));
+  document.getElementById(screens[name]).classList.add('show');
+  current = name;
+  document.getElementById('h1sub').textContent = name === 'menu' ? '選一關開始' : name === 'final' ? '頒獎台' : stageById(name).name;
+  if (name === 'menu') renderMenu();
+  if (name === 'final') renderFinal();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => go('menu')));
+
+// ============ 選車 ============
 const overlay = document.getElementById('overlay');
 document.getElementById('cars').innerHTML = CARS.map(c =>
   `<div class="car" data-id="${c.id}" style="--c:${labelColor(c)}">${carSVG(c)}<div class="nm">${c.en}</div></div>`).join('');
 document.querySelectorAll('.car').forEach(el => el.addEventListener('click', () => chooseCar(el.dataset.id)));
-function chooseCar(id) {
+function chooseCar(id, silent) {
   car = CARS.find(c => c.id === id);
   overlay.classList.add('hide');
-  document.getElementById('mycar').innerHTML = `${carSVG(car)}<div><b style="color:${labelColor(car)}">${car.en}</b><br><a id="changeCar">換車</a></div>`;
-  document.getElementById('changeCar').addEventListener('click', () => { clearTimers(); setLights(0); state = 'idle'; show('<span class="dim">按紅色啟動鍵或空白鍵開始</span>'); hideResultExtras(); overlay.classList.remove('hide'); });
+  document.getElementById('mycar').innerHTML = `${carSVG(car)}<div><b style="color:${labelColor(car)}">${car.en}</b><br><a class="linkbtn" id="changeCar">換車</a></div>`;
+  document.getElementById('changeCar').addEventListener('click', () => { go('menu'); overlay.classList.remove('hide'); });
+  if (!silent) { save(); go('menu'); }
 }
-const resultCar = document.getElementById('resultCar'), namebox = document.getElementById('namebox'), nameInput = document.getElementById('nameInput');
-function hideResultExtras() { resultCar.classList.remove('show'); namebox.classList.remove('show'); shotBtn.classList.remove('show'); }
 
-let lastRt = null;
-const fmt = ms => (ms / 1000).toFixed(2);   // 轉播格式：0.21
+// ============ 關卡選單 ============
+function renderMenu() {
+  document.getElementById('stages').innerHTML = STAGES.map(s => {
+    const b = best[s.id];
+    const sb = b ? `<b>${b.points} 分</b><span class="tn">${s.fmtValue(b.value)}・${s.tiers[b.tier].name}</span>` : `<span class="tn">未挑戰</span>`;
+    return `<div class="stage" data-stage="${s.id}"><div class="sn">${s.name}</div><div class="sd">${s.desc}</div><div class="sb">${sb}</div></div>`;
+  }).join('');
+  document.querySelectorAll('.stage').forEach(el => el.addEventListener('click', () => go(el.dataset.stage)));
+  const t = totalScore();
+  document.getElementById('totalScore').textContent = t == null ? '--' : t;
+  document.getElementById('totalHint').textContent = t == null ? '完成任一關即可看頒獎台' : `${STAGES.filter(s => best[s.id]).length} / ${STAGES.length} 關　·　${PODIUM_NAME[podiumIdx()]}`;
+  document.getElementById('toFinal').disabled = t == null;
+}
+document.getElementById('toFinal').addEventListener('click', () => go('final'));
+document.getElementById('resetAll').addEventListener('click', () => { if (confirm('清除所有關卡成績？')) { best = {}; save(); renderMenu(); } });
 
-function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+// ============ 階梯 ============
+function renderLadder(stage, elId, value) {
+  const me = value == null ? -1 : tierIdxOf(stage, value);
+  document.getElementById(elId).innerHTML = stage.tiers.map((t, i) =>
+    `<div class="tier${i === me ? ' me' : ''}"><span class="r">${stage.range(t)}</span><span class="n">${t.name}${i === me ? '　← 你在這' : ''}<span style="color:#666;font-weight:400"> · ${TIER_POINTS[i]} 分</span></span><span class="d">${t.desc}</span></div>`).join('');
+}
+function stageResultHTML(stage, value, r, cls) {
+  const t = stage.tiers[r.tier];
+  return `<div class="time ${cls}">${stage.fmtValue(value)}</div><span class="dim">${t.name}</span><div class="score">+${r.points} 分${r.isBest ? '　新最佳' : ''}　·　再按紅鍵重玩</div>`;
+}
+
+// ============ 關卡 1：起跑反應 ============
+const cols = [...document.querySelectorAll('.col')];
+const statusStart = document.getElementById('statusStart');
+let sState = 'idle', sTimers = [], lightsOutAt = 0;
+const STG_START = stageById('start');
+function clearS() { sTimers.forEach(clearTimeout); sTimers = []; }
 function setLights(n) { cols.forEach((c, i) => c.classList.toggle('on', i < n)); }
-function show(html) { statusEl.innerHTML = html; }
-
-function start() {
-  clearTimers();
-  hideResultExtras();
-  state = 'lighting';
-  setLights(0);
-  show('<span class="dim">準備…</span>');
-  // 每 1 秒亮一盞，共 5 盞
-  for (let i = 1; i <= 5; i++) {
-    timers.push(setTimeout(() => setLights(i), i * 1000));
-  }
-  // 第 5 燈亮起後，隨機 0.2~3 秒(真實 F1 規則)全滅
-  const hold = 200 + Math.random() * 2800;
-  timers.push(setTimeout(() => { state = 'armed'; }, 5000));
-  timers.push(setTimeout(() => {
-    setLights(0);
-    lightsOutAt = performance.now();   // 以熄燈那一刻為基準
-    state = 'go';
-  }, 5000 + hold));
+function stopStart() { clearS(); setLights(0); sState = 'idle'; statusStart.innerHTML = '<span class="dim">按紅鍵開始，五燈熄滅瞬間再按</span>'; renderLadder(STG_START, 'ladderStart', null); }
+function startSeq() {
+  clearS(); sState = 'lighting'; setLights(0);
+  statusStart.innerHTML = '<span class="dim">準備…</span>';
+  for (let i = 1; i <= 5; i++) sTimers.push(setTimeout(() => setLights(i), i * 1000));
+  const hold = 200 + Math.random() * 2800;           // 全亮後隨機 0.2–3 秒熄滅（FIA 規則）
+  sTimers.push(setTimeout(() => { sState = 'armed'; }, 5000));
+  sTimers.push(setTimeout(() => { setLights(0); lightsOutAt = performance.now(); sState = 'go'; }, 5000 + hold));
 }
-
-function press() {
-  if (!car) return;                                   // 還沒選車
-  if (state === 'idle' || state === 'result') { start(); return; }
-  if (state === 'lighting' || state === 'armed') {        // 燈還沒滅就按
-    clearTimers(); setLights(0); state = 'result';
-    show('<span class="bad">偷跑！JUMP START</span><br><span class="dim">再按一次重來</span>');
+function pressStart() {
+  if (!car) return;
+  if (sState === 'idle' || sState === 'result') { startSeq(); return; }
+  if (sState === 'lighting' || sState === 'armed') {
+    clearS(); setLights(0); sState = 'result';
+    statusStart.innerHTML = '<span class="bad">偷跑！JUMP START</span><br><span class="dim">再按一次重來</span>';
     return;
   }
-  if (state === 'go') {
+  if (sState === 'go') {
     const rt = Math.round(performance.now() - lightsOutAt);
-    state = 'result';
-    results.push(rt);
-    const cls = rt < 200 ? 'ok' : rt < 300 ? '' : 'bad';
-    show(`<div class="time ${cls}">${fmt(rt)}<span style="font-size:.5em">s</span></div><span class="dim">${grade(rt)}　再按一次重來</span>`);
-    updateStats();
-    renderLadder(rt);
-    lastRt = rt;
-    resultCar.innerHTML = `${carSVG(car)}<div class="team" style="color:${labelColor(car)}">${car.en}</div>${podiumSVG(tierIndex(rt), car)}`;
-    resultCar.classList.add('show');
-    nameInput.value = playerName;
-    namebox.classList.add('show');
-    if (playerName) shotBtn.classList.add('show');   // 已輸入過名字就直接出現
-    else setTimeout(() => nameInput.focus(), 50);
+    sState = 'result';
+    const r = recordResult(STG_START, rt);
+    statusStart.innerHTML = stageResultHTML(STG_START, rt, r, rt < 200 ? 'ok' : rt < 300 ? '' : 'bad');
+    renderLadder(STG_START, 'ladderStart', rt);
   }
 }
+wireRedButton(document.getElementById('startBtn'), pressStart);
 
-// 等級階梯（來源：FIA / F1 官方 / Motorsport.com 轉播數據）
-const TIERS = [
-  { min: 0,   max: 100, name: '超越人類極限', desc: '比燈還快，F1 會直接判偷跑。你大概是猜的。' },
-  { min: 100, max: 150, name: '裁判盯上你了', desc: 'FIA 把車動低於 0.2s 視為可疑；這區間幾乎只有預判做得到。' },
-  { min: 150, max: 200, name: '傳奇起跑', desc: 'Bottas 2017 奧地利 0.201s，對手質疑偷跑、FIA 判合法。你比他還快。' },
-  { min: 200, max: 250, name: 'F1 頂尖起跑者', desc: '轉播顯示頂尖起跑多落在 0.20–0.24s，F1 官方說車手平均約 0.2s。' },
-  { min: 250, max: 300, name: 'F1 車手水準', desc: '正規 F1 車手常見區間，能站上發車格。' },
-  { min: 300, max: 350, name: '一般人平均', desc: '人類平均反應約 0.30s。' },
-  { min: 350, max: 500, name: '起跑被超車', desc: '熄燈後慢半拍，旁邊的車已經先衝。' },
-  { min: 500, max: Infinity, name: '還在看燈', desc: '多練幾次會進步，這很正常。' },
-];
-// 依「畫面顯示的百分位秒數」分級，避免 0.196s 顯示 0.20 卻被歸到 0.15–0.19
-function tierOf(rt) { const r = Math.round(rt / 10) * 10; return TIERS.find(t => r >= t.min && r < t.max); }
-function grade(rt) { return tierOf(rt).name; }
-function renderLadder(rt) {
-  document.getElementById('ladder').innerHTML = TIERS.map(t => {
-    const range = t.max === Infinity ? `${fmt(t.min)}s 以上` : `${fmt(t.min)}–${fmt(t.max - 10)}s`;
-    const me = rt != null && tierOf(rt) === t ? ' me' : '';
-    return `<div class="tier${me}"><span class="r">${range}</span><span class="n">${t.name}${me ? '　← 你在這' : ''}</span><span class="d">${t.desc}</span></div>`;
+// ============ 關卡 2：反應燈板 ============
+const board = document.getElementById('board');
+board.innerHTML = Array.from({ length: 9 }, (_, i) => `<div class="cell" data-i="${i}"></div>`).join('');
+const cells = [...board.children];
+const statusBatak = document.getElementById('statusBatak');
+const STG_BATAK = stageById('batak');
+const BATAK_SEC = 10;
+let bState = 'idle', bTimers = [], bLit = -1, bHits = 0, bMiss = 0, bEnd = 0, bRaf = 0;
+function hud() { document.getElementById('bkHits').textContent = bHits; document.getElementById('bkMiss').textContent = bMiss; }
+function stopBatak() { bTimers.forEach(clearTimeout); bTimers = []; cancelAnimationFrame(bRaf); cells.forEach(c => c.className = 'cell'); bLit = -1; bState = 'idle'; bHits = 0; bMiss = 0; hud(); document.getElementById('bkTime').textContent = BATAK_SEC.toFixed(1); statusBatak.innerHTML = '<span class="dim">按紅鍵開始，10 秒內點掉亮起的燈</span>'; renderLadder(STG_BATAK, 'ladderBatak', null); }
+function lightNext() {
+  let n; do { n = Math.floor(Math.random() * 9); } while (n === bLit);
+  cells.forEach(c => c.className = 'cell');
+  bLit = n; cells[n].classList.add('on');
+}
+function startBatak() {
+  stopBatak(); bState = 'count';
+  let n = 3;
+  const tick = () => {
+    if (n > 0) { statusBatak.innerHTML = `<div class="time">${n}</div>`; n--; bTimers.push(setTimeout(tick, 700)); return; }
+    statusBatak.innerHTML = '<div class="time ok">GO!</div>';
+    bState = 'run'; bEnd = performance.now() + BATAK_SEC * 1000; lightNext();
+    const loop = () => {
+      const left = Math.max(0, bEnd - performance.now());
+      document.getElementById('bkTime').textContent = (left / 1000).toFixed(1);
+      if (left <= 0) { finishBatak(); return; }
+      bRaf = requestAnimationFrame(loop);
+    };
+    bRaf = requestAnimationFrame(loop);
+  };
+  tick();
+}
+function finishBatak() {
+  bState = 'result'; cells.forEach(c => c.className = 'cell'); bLit = -1;
+  const r = recordResult(STG_BATAK, bHits);
+  const avg = bHits ? (BATAK_SEC / bHits).toFixed(2) : '--';
+  statusBatak.innerHTML = stageResultHTML(STG_BATAK, bHits, r, bHits >= 28 ? 'ok' : bHits >= 20 ? '' : 'bad') + `<div class="dim" style="font-size:14px;margin-top:4px">平均 ${avg}s / 顆　·　誤點 ${bMiss}</div>`;
+  renderLadder(STG_BATAK, 'ladderBatak', bHits);
+}
+board.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  if (bState !== 'run') return;
+  const cell = e.target.closest('.cell'); if (!cell) return;
+  const i = +cell.dataset.i;
+  if (i === bLit) { bHits++; cell.classList.add('hit'); lightNext(); }
+  else { bMiss++; }
+  hud();
+});
+wireRedButton(document.getElementById('batakBtn'), () => { if (!car) return; if (bState === 'idle' || bState === 'result') startBatak(); });
+
+// 紅鍵：pointerdown 觸發（比 click 早），滑動畫面不會誤觸
+function wireRedButton(btn, fn) {
+  btn.addEventListener('pointerdown', e => { e.preventDefault(); btn.classList.add('down'); fn(); });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => btn.addEventListener(ev, () => btn.classList.remove('down')));
+  btn.addEventListener('click', e => e.preventDefault());
+  btn.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'Enter') e.preventDefault(); });
+}
+window.addEventListener('keydown', e => {
+  if (e.repeat || e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); if (current === 'start') pressStart(); }
+});
+
+// ============ 頒獎台頁 ============
+const resultCar = document.getElementById('resultCar'), namebox = document.getElementById('namebox'), nameInput = document.getElementById('nameInput'), shotBtn = document.getElementById('shot');
+function renderFinal() {
+  const t = totalScore(), p = podiumIdx();
+  document.getElementById('finalScore').textContent = t == null ? '--' : t;
+  document.getElementById('finalGrade').textContent = PODIUM_NAME[p];
+  resultCar.innerHTML = `${carSVG(car).replace('<svg ', '<svg class="carsvg" ')}<div class="team" style="color:${labelColor(car)}">${car.en}</div>${podiumSVG(p, car)}`;
+  document.getElementById('breakdown').innerHTML = STAGES.map(s => {
+    const b = best[s.id];
+    return b ? `<div class="bk"><span>${s.name}</span><span class="v">${s.fmtValue(b.value)}　${s.tiers[b.tier].name}</span><span class="p">${b.points} 分</span></div>`
+             : `<div class="bk none"><span>${s.name}</span><span class="v">未挑戰</span><span class="p">--</span></div>`;
   }).join('');
+  nameInput.value = playerName;
+  namebox.classList.add('show');
+  shotBtn.classList.toggle('show', !!playerName);
+  if (!playerName) setTimeout(() => nameInput.focus(), 50);
 }
-renderLadder(null);
-
-function updateStats() {
-  bestEl.textContent = fmt(Math.min(...results));
-  avgEl.textContent = fmt(results.reduce((a, b) => a + b, 0) / results.length);
-  countEl.textContent = results.length;
-}
-
-// 名字：輸入並確定後才出現截圖按鈕；在輸入框打空白鍵不觸發計時
 function confirmName() {
   playerName = nameInput.value.trim();
   if (!playerName) { nameInput.focus(); return; }
-  shotBtn.classList.add('show');
-  nameInput.blur();
+  save(); shotBtn.classList.add('show'); nameInput.blur();
 }
 document.getElementById('nameOk').addEventListener('click', confirmName);
 nameInput.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') confirmName(); });
-['pointerdown', 'click'].forEach(ev => namebox.addEventListener(ev, e => e.stopPropagation()));
-
-// ===== 結果截圖：用 canvas 畫成績卡，手機走分享、電腦直接下載 =====
-const shotBtn = document.getElementById('shot');
 ['pointerdown', 'click', 'keydown'].forEach(ev => shotBtn.addEventListener(ev, e => e.stopPropagation()));
 shotBtn.addEventListener('click', shareResult);
 
+// ============ 成績卡（1080×1920 直式） ============
 async function drawCard() {
-  // 手機直式 9:16
   const W = 1080, H = 1920, c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-  const t = tierOf(lastRt);
-  const best = Math.min(...results), avg = results.reduce((a, b) => a + b, 0) / results.length;
   const font = '"Segoe UI","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC",sans-serif';
   const rr = (x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r); };
   const loadSVG = svg => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); });
+  const total = totalScore(), p = podiumIdx();
 
-  // 背景
-  const bg = g.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, '#111116'); bg.addColorStop(1, '#07070a');
+  const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#111116'); bg.addColorStop(1, '#07070a');
   g.fillStyle = bg; g.fillRect(0, 0, W, H);
 
-  // 標題
   g.textAlign = 'center'; g.fillStyle = '#9a9aa2'; g.font = `600 40px ${font}`;
-  g.fillText('F1 起跑反應測試', W / 2, 120);
+  g.fillText('F1 車手體檢', W / 2, 120);
 
-  // 燈架：全亮紅燈＋光暈
+  // 燈架全亮
   const gx = 110, gy = 160, gw = W - 220, gh = 250;
-  g.fillStyle = '#1a1a1f'; rr(gx, gy, gw, gh, 24); g.fill();
-  g.strokeStyle = '#2c2c33'; g.lineWidth = 3; g.stroke();
+  g.fillStyle = '#1a1a1f'; rr(gx, gy, gw, gh, 24); g.fill(); g.strokeStyle = '#2c2c33'; g.lineWidth = 3; g.stroke();
   const lampR = 42, colGap = gw / 5;
   for (let i = 0; i < 5; i++) for (let j = 0; j < 2; j++) {
     const x = gx + colGap * (i + 0.5), y = gy + 72 + j * 106;
-    g.save(); g.shadowColor = '#ff1e1e'; g.shadowBlur = 50;
-    g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.fillStyle = '#ff1e1e'; g.fill(); g.restore();
+    g.save(); g.shadowColor = '#ff1e1e'; g.shadowBlur = 50; g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.fillStyle = '#ff1e1e'; g.fill(); g.restore();
     g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.lineWidth = 5; g.strokeStyle = '#111'; g.stroke();
-    const hl = g.createRadialGradient(x - 14, y - 16, 3, x, y, lampR);
-    hl.addColorStop(0, 'rgba(255,255,255,.55)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
+    const hl = g.createRadialGradient(x - 14, y - 16, 3, x, y, lampR); hl.addColorStop(0, 'rgba(255,255,255,.55)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
     g.beginPath(); g.arc(x, y, lampR, 0, Math.PI * 2); g.fillStyle = hl; g.fill();
   }
-
   // 賽車
   const carImg = await loadSVG(carSVG(car));
-  const cw = 680, ch = cw * 128 / 400;
-  g.drawImage(carImg, (W - cw) / 2, 440, cw, ch);
-
+  const cw = 680, ch = cw * 128 / 400; g.drawImage(carImg, (W - cw) / 2, 440, cw, ch);
   // 頒獎台
-  const podImg = await loadSVG(podiumSVG(tierIndex(lastRt), car).replace(' class="podium"', ''));
+  const podImg = await loadSVG(podiumSVG(p, car).replace(' class="podium"', ''));
   const pw = 640, ph = pw * 210 / 300;
   rr((W - pw) / 2 - 16, 670 - 12, pw + 32, ph + 24, 20); g.fillStyle = '#0f0f13'; g.fill();
   g.drawImage(podImg, (W - pw) / 2, 670, pw, ph);
-
   // 名字 · 車隊
-  g.fillStyle = '#fff'; g.font = `700 56px ${font}`;
-  g.fillText(playerName, W / 2, 1210);
-  g.fillStyle = labelColor(car); g.font = `800 40px ${font}`;
-  g.fillText(car.en, W / 2, 1262);
-
-  // 成績
-  const color = lastRt < 200 ? '#3ddc84' : lastRt < 300 ? '#ffffff' : '#ff5252';
-  g.fillStyle = color; g.font = `800 190px ${font}`;
-  g.fillText(`${fmt(lastRt)}s`, W / 2, 1450);
-
-  // 等級
-  g.fillStyle = '#3ddc84'; g.font = `700 56px ${font}`;
-  g.fillText(t.name, W / 2, 1535);
-  g.fillStyle = '#8a8a92'; g.font = `30px ${font}`;
-  wrapText(g, t.desc, W / 2, 1585, W - 200, 42);
-
-  // 統計列
-  rr(120, 1680, W - 240, 130, 22); g.fillStyle = '#15151a'; g.fill();
-  const cols = [['最佳', `${fmt(best)}s`], ['平均', `${fmt(avg)}s`], ['次數', `${results.length}`]];
-  cols.forEach(([k, v], i) => {
-    const x = 120 + (W - 240) / 6 * (2 * i + 1);
-    g.fillStyle = '#8a8a92'; g.font = `28px ${font}`; g.fillText(k, x, 1726);
-    g.fillStyle = '#fff'; g.font = `700 44px ${font}`; g.fillText(v, x, 1782);
+  g.fillStyle = '#fff'; g.font = `700 56px ${font}`; g.fillText(playerName, W / 2, 1210);
+  g.fillStyle = labelColor(car); g.font = `800 40px ${font}`; g.fillText(car.en, W / 2, 1262);
+  // 總分
+  g.fillStyle = total >= 80 ? '#3ddc84' : total >= 45 ? '#ffffff' : '#ff5252'; g.font = `800 190px ${font}`;
+  g.fillText(`${total}`, W / 2, 1450);
+  g.fillStyle = '#8a8a92'; g.font = `600 36px ${font}`; g.fillText('總分', W / 2 + 190, 1450);
+  g.fillStyle = '#3ddc84'; g.font = `700 56px ${font}`; g.fillText(PODIUM_NAME[p], W / 2, 1535);
+  // 各關分項
+  const rows = STAGES.map(s => best[s.id] ? [s.name, `${s.fmtValue(best[s.id].value)}　${s.tiers[best[s.id].tier].name}`, `${best[s.id].points} 分`] : [s.name, '未挑戰', '--']);
+  const by = 1600, bh = 70 * rows.length + 30;
+  rr(100, by, W - 200, bh, 22); g.fillStyle = '#15151a'; g.fill();
+  rows.forEach(([n, v, pts], i) => {
+    const y = by + 50 + i * 70;
+    g.textAlign = 'left'; g.fillStyle = '#ddd'; g.font = `700 32px ${font}`; g.fillText(n, 140, y);
+    g.textAlign = 'center'; g.fillStyle = '#aaa'; g.font = `30px ${font}`; g.fillText(v, W / 2 + 40, y);
+    g.textAlign = 'right'; g.fillStyle = '#3ddc84'; g.font = `700 34px ${font}`; g.fillText(pts, W - 140, y);
   });
-
   // 日期與署名
   g.textAlign = 'left'; g.fillStyle = '#55555c'; g.font = `24px ${font}`;
   g.fillText(new Date().toLocaleString('zh-TW', { hour12: false }), 90, H - 50);
-  g.textAlign = 'right'; g.font = `22px ${font}`;
-  g.fillText('Generated by Gary Fan', W - 90, H - 50);
+  g.textAlign = 'right'; g.font = `22px ${font}`; g.fillText('Generated by Gary Fan', W - 90, H - 50);
   return c;
 }
-function wrapText(g, text, x, y, maxW, lh) {
-  let line = '';
-  for (const ch of text) {
-    if (g.measureText(line + ch).width > maxW) { g.fillText(line, x, y); line = ch; y += lh; }
-    else line += ch;
-  }
-  if (line) g.fillText(line, x, y);
-}
-
 async function shareResult() {
-  if (lastRt == null) return;
+  if (totalScore() == null) return;
   const canvas = await drawCard();
   const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-  const file = new File([blob], `f1-${playerName}-${fmt(lastRt)}s.png`, { type: 'image/png' });
-  // 手機：系統分享面板（LINE、存到相簿…）
+  const file = new File([blob], `f1-${playerName}-${totalScore()}.png`, { type: 'image/png' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'F1 起跑反應測試', text: `${playerName}（${car.en}）反應時間 ${fmt(lastRt)}s，${tierOf(lastRt).name}！` }); return; }
+    try { await navigator.share({ files: [file], title: 'F1 車手體檢', text: `${playerName}（${car.en}）F1 車手體檢 ${totalScore()} 分，${PODIUM_NAME[podiumIdx()]}！` }); return; }
     catch (e) { if (e.name === 'AbortError') return; }
   }
-  // 電腦：直接下載 PNG
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
-// 只有紅色啟動鍵觸發：pointerdown 比 click 早觸發，延遲更低；滑動畫面其他地方不會觸發
-const startBtn = document.getElementById('startBtn');
-startBtn.addEventListener('pointerdown', e => { e.preventDefault(); startBtn.classList.add('down'); press(); });
-['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => startBtn.addEventListener(ev, () => startBtn.classList.remove('down')));
-startBtn.addEventListener('click', e => e.preventDefault());   // 已在 pointerdown 處理，避免重複
-startBtn.addEventListener('keydown', e => { if (e.code === 'Space' || e.code === 'Enter') e.preventDefault(); });
-// 鍵盤：空白鍵 / Enter 仍可用（電腦）
-window.addEventListener('keydown', e => {
-  if (e.repeat || e.target.tagName === 'INPUT') return;
-  if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); press(); }
-});
+// ============ 啟動 ============
+renderLadder(STG_START, 'ladderStart', null);
+renderLadder(STG_BATAK, 'ladderBatak', null);
+load();
+go('menu');
 </script>
 </body>
 </html>
