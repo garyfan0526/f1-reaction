@@ -824,6 +824,19 @@ async function shareResult() {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
+// ============ 擋雙擊縮放／雙指縮放（LINE 內建瀏覽器與部分 iOS 不吃 touch-action）============
+(() => {
+  let last = 0;
+  document.addEventListener('touchend', e => {
+    if (e.target.closest('input')) return;
+    const now = Date.now();
+    if (now - last < 350) e.preventDefault();   // 第二次快速觸碰：取消預設（雙擊縮放）
+    last = now;
+  }, { passive: false });
+  document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
+  document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+})();
+
 // ============ 音效（Web Audio 合成，不用音檔）============
 const SFX = (() => {
   let ctx = null, muted = false;
@@ -849,9 +862,9 @@ const SFX = (() => {
     const g = c.createGain(); env(g, t, .01, dur, peak); src.connect(f).connect(g).connect(c.destination); src.start(t);
   }
   // 引擎拉轉：鋸齒波低頻往上掃＋諧波＋噪音，像 V6 暖胎起步
-  function rev(dur = 1.1, from = 70, to = 420) {
+  function rev(dur = 1.1, from = 70, to = 420, lpTo = 3200, lpFrom = 600) {
     if (muted) return; const c = ac(), t = c.currentTime, g = c.createGain(), f = c.createBiquadFilter();
-    f.type = 'lowpass'; f.frequency.setValueAtTime(600, t); f.frequency.exponentialRampToValueAtTime(3200, t + dur);
+    f.type = 'lowpass'; f.frequency.setValueAtTime(lpFrom, t); f.frequency.exponentialRampToValueAtTime(lpTo, t + dur);
     [1, 2, 3].forEach((h, i) => { const o = c.createOscillator(); o.type = i === 0 ? 'sawtooth' : 'square';
       o.frequency.setValueAtTime(from * h, t); o.frequency.exponentialRampToValueAtTime(to * h, t + dur * .85); o.frequency.exponentialRampToValueAtTime(to * h * .7, t + dur + .3);
       const og = c.createGain(); og.gain.value = i === 0 ? .5 : .18 / h; o.connect(og).connect(f); o.start(t); o.stop(t + dur + .4); });
@@ -861,7 +874,7 @@ const SFX = (() => {
   return {
     lamp:   () => tone(1100, .09, 'square', .2),                 // 起跑燈每亮一組
     rev:    () => rev(),                                          // 紅鍵：引擎拉轉
-    launch: () => rev(.6, 200, 700),                              // 熄燈後按下：起步拉轉
+    launch: () => rev(2.0, 55, 240, 1100, 300),                   // 熄燈後按下：低沉、約 2 秒的起步拉轉
     buzz:   () => tone(110, .45, 'sawtooth', .3, 70),             // 偷跑／太早
     beep:   () => tone(660, .12, 'square', .22),                  // 倒數 3-2-1
     go:     () => tone(1320, .25, 'square', .25),                 // GO
