@@ -10,13 +10,13 @@
   h1 { font-size: 20px; font-weight: 600; letter-spacing: 2px; color: #bbb; margin: 0 0 4px; }
   .sub { color: #666; font-size: 12px; margin-bottom: 10px; }
   .stage { position: relative; width: min(320px, 88vw); height: 440px; background: #15151a; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 40px #000; cursor: pointer; touch-action: none; }
-  .hand { position: absolute; left: 50%; top: 300px; width: 150px; height: 60px; transform: translateX(-50%); }
-  .hand div { position: absolute; top: 0; width: 46px; height: 60px; border-radius: 10px; background: #f1c8a0; }
-  .hand .l { left: 0; } .hand .r { right: 0; }
+  .hand { position: absolute; left: 50%; top: 286px; width: 240px; height: 110px; transform: translateX(-50%); pointer-events: none; }
+  .hand svg { position: absolute; top: 0; width: 96px; height: 110px; }
+  .hand .l { left: 0; } .hand .r { right: 0; transform: scaleX(-1); }
   .ruler { position: absolute; left: 50%; width: 44px; height: 420px; transform: translateX(-50%); background: #f5d57a; border-radius: 4px; top: -420px; border: 2px solid #c9a94a; will-change: top; transition: opacity .2s; }
   .ruler i { position: absolute; left: 0; height: 2px; background: #6b5620; }
   .ruler b { position: absolute; right: 6px; font-size: 9px; color: #4a3a10; transform: translateY(-5px); font-style: normal; }
-  .msg { position: absolute; left: 0; right: 0; top: 18px; text-align: center; font-size: 18px; color: #888; }
+  .msg { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 17px; color: #888; }
   .res { position: absolute; left: 0; right: 0; top: 110px; text-align: center; }
   .res .box { display: inline-block; background: #0b0b0ee6; padding: 14px 22px; border-radius: 14px; }
   .stage.done .ruler { opacity: .25; }
@@ -35,7 +35,32 @@
   <div class="stage" id="stage">
     <div class="msg" id="msg">點一下畫面準備</div>
     <div class="ruler" id="ruler"></div>
-    <div class="hand"><div class="l"></div><div class="r"></div></div>
+    <div class="hand">
+      <svg class="l" viewBox="0 0 96 110">
+        <defs><linearGradient id="sk" x1="0" x2="1"><stop offset="0" stop-color="#e8b88e"/><stop offset="1" stop-color="#f5d2b0"/></linearGradient></defs>
+        <!-- 手腕與手掌（側面，指尖朝右） -->
+        <path d="M0,50 h24 q30,-6 52,-2 v44 q-22,6 -52,2 h-24z" fill="url(#sk)"/>
+        <path d="M0,60 h20" stroke="#d9a47c" stroke-width="2" opacity=".5"/>
+        <!-- 四指（疊在一起，略有層次） -->
+        <path d="M70,48 h20 q6,0 6,6 t-6,6 h-20z" fill="#f5d2b0" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M72,60 h18 q6,0 6,6 t-6,6 h-18z" fill="#efc7a3" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M72,72 h16 q6,0 6,6 t-6,6 h-16z" fill="#e9bd98" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M70,84 h12 q5,0 5,5 t-5,5 h-12z" fill="#e3b38e" stroke="#d9a47c" stroke-width="1"/>
+        <!-- 拇指（在上方，準備往下捏） -->
+        <path d="M46,46 q4,-26 24,-30 q10,-2 12,6 q2,8 -8,12 q-10,4 -14,16z" fill="#f5d2b0" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M78,22 q6,2 4,8" stroke="#d9a47c" stroke-width="1.5" fill="none" opacity=".6"/>
+      </svg>
+      <svg class="r" viewBox="0 0 96 110">
+        <path d="M0,50 h24 q30,-6 52,-2 v44 q-22,6 -52,2 h-24z" fill="url(#sk)"/>
+        <path d="M0,60 h20" stroke="#d9a47c" stroke-width="2" opacity=".5"/>
+        <path d="M70,48 h20 q6,0 6,6 t-6,6 h-20z" fill="#f5d2b0" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M72,60 h18 q6,0 6,6 t-6,6 h-18z" fill="#efc7a3" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M72,72 h16 q6,0 6,6 t-6,6 h-16z" fill="#e9bd98" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M70,84 h12 q5,0 5,5 t-5,5 h-12z" fill="#e3b38e" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M46,46 q4,-26 24,-30 q10,-2 12,6 q2,8 -8,12 q-10,4 -14,16z" fill="#f5d2b0" stroke="#d9a47c" stroke-width="1"/>
+        <path d="M78,22 q6,2 4,8" stroke="#d9a47c" stroke-width="1.5" fill="none" opacity=".6"/>
+      </svg>
+    </div>
     <div class="res" id="res"></div>
   </div>
   <div class="hist" id="hist">本次：--　平均：--　次數：0</div>
@@ -44,7 +69,7 @@
 <script>
 const stage = document.getElementById('stage'), ruler = document.getElementById('ruler'), msg = document.getElementById('msg'), res = document.getElementById('res');
 const PX_PER_CM = 10;            // 1 cm = 10px（尺 420px = 42 cm）
-const HAND_Y = 330;              // 手指位置（尺的 0 cm 要對齊這裡）
+const HAND_Y = 336;              // 手指位置（尺的 0 cm 要對齊這裡）
 const G = 980;                   // cm/s²
 let state = 'idle', t0 = 0, raf = 0, timer = 0, hist = [];
 // 畫刻度
