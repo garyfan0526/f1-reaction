@@ -95,24 +95,24 @@
   .tier.me .n, .tier.me .r { color: #fff; font-weight: 600; }
   .tier.me .d { color: #9fd9b4; }
   /* 頒獎台頁 */
-  .final-score { text-align: center; color: #888; font-size: 14px; margin-top: 4px; }
-  .final-score b { display: block; font-size: 72px; color: #fff; font-weight: 800; line-height: 1.1; }
-  .result-car { display: flex; flex-direction: column; align-items: center; margin-top: 8px; }
-  .result-car svg.carsvg { width: min(320px, 80vw); height: auto; }
-  .result-car .team { font-weight: 700; font-size: 18px; margin-top: 4px; }
-  .podium { width: min(420px, 92vw); margin-top: 10px; border-radius: 12px; background: #0f0f13; }
-  .breakdown { width: min(420px, 92vw); margin-top: 14px; border: 1px solid #26262c; border-radius: 10px; overflow: hidden; }
-  .bk { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 9px 14px; background: #121216; border-bottom: 1px solid #1c1c22; font-size: 14px; color: #bbb; }
+  .final-score { text-align: center; color: #888; font-size: 14px; margin-top: 0; display: flex; align-items: baseline; gap: 10px; }
+  .final-score b { font-size: 48px; color: #fff; font-weight: 800; line-height: 1; }
+  .final-score span { color: #3ddc84; font-size: 18px; font-weight: 700; }
+  .result-car { display: flex; flex-direction: column; align-items: center; margin-top: 4px; }
+  .podium { width: min(300px, 78vw); margin-top: 4px; border-radius: 12px; background: #0f0f13; }
+  .breakdown { width: min(360px, 90vw); margin-top: 8px; border: 1px solid #26262c; border-radius: 10px; overflow: hidden; }
+  .bk { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; padding: 6px 12px; background: #121216; border-bottom: 1px solid #1c1c22; font-size: 14px; color: #bbb; }
   .bk:last-child { border-bottom: 0; }
   .bk .v { color: #fff; font-variant-numeric: tabular-nums; }
   .bk .p { color: #3ddc84; font-weight: 700; min-width: 48px; text-align: right; }
   .bk.none { color: #555; } .bk.none .v, .bk.none .p { color: #555; }
-  .namebox { display: none; margin-top: 14px; align-items: center; gap: 8px; }
+  .namebox { display: none; margin-top: 10px; align-items: center; gap: 8px; }
   .namebox.show { display: flex; }
   .namebox input { background: #15151a; border: 1px solid #333; color: #fff; padding: 9px 12px; border-radius: 8px; font-size: 16px; width: 170px; font-family: inherit; }
   .namebox input:focus { outline: 1px solid #3ddc84; }
   .namebox button { padding: 9px 16px; border-radius: 8px; border: 0; background: #3ddc84; color: #000; font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; }
-  #shot { display: none; } #shot.show { display: inline-block; }
+  #shot { display: none; margin-top: 8px; } #shot.show { display: inline-block; }
+  #scrFinal .row { margin-top: 2px; } #scrFinal .row .btn { margin-top: 6px; padding: 6px 16px; font-size: 13px; }
   .sig { position: fixed; right: 10px; bottom: 6px; font-size: 10px; color: #555; }
   @media (max-width: 520px) { .lamp { width: 44px; height: 44px; } .gantry { gap: 12px; padding: 16px; } .time { font-size: 48px; } body { padding-top: 14px; } h1 { margin-bottom: 8px; font-size: 20px; } #scrStart .start-wrap { margin-top: 26px; } #scrStart .start { width: 104px; height: 104px; font-size: 16px; } }
 </style>
@@ -598,7 +598,7 @@ function renderFinal() {
   const t = totalScore(), p = podiumIdx();
   document.getElementById('finalScore').textContent = t == null ? '--' : t;
   document.getElementById('finalGrade').textContent = PODIUM_NAME[p];
-  resultCar.innerHTML = `${carSVG(car).replace('<svg ', '<svg class="carsvg" ')}<div class="team" style="color:${labelColor(car)}">${car.en}</div>${podiumSVG(p, car)}`;
+  resultCar.innerHTML = podiumSVG(p, car);
   document.getElementById('breakdown').innerHTML = STAGES.map(s => {
     const b = best[s.id];
     return b ? `<div class="bk"><span>${s.name}</span><span class="v">${s.fmtValue(b.value)}　${s.tiers[b.tier].name}</span><span class="p">${b.points} 分</span></div>`
