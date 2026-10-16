@@ -419,7 +419,7 @@ const STAGES = [
     norm: v => v,
     // 門檻為估計值（Batak 牆面成績扣掉手臂移動換算到手機），待實測校準
     tiers: [
-      { ...P(100), min: 34, max: Infinity, name: '金氏紀錄級', desc: 'Button 30 秒 58 顆（0.52s/顆），扣掉手臂移動換算到手機約 0.30s/顆。燈板要先看到才能點，快就是真的快。' },
+      { ...P(100), min: 34, max: Infinity, name: '金氏紀錄級', desc: 'Button 30 秒 58 顆（0.52s/顆），扣掉手臂移動換算到手機約 0.30s/顆。' },
       { ...P(85), min: 29, max: 34, name: 'F1 頂尖反應', desc: '車隊訓練前段班的水準。' },
       { ...P(70), min: 24, max: 29, name: 'F1 車手水準', desc: '正規車手訓練常見成績。' },
       { ...P(50), min: 20, max: 24, name: '一般人平均', desc: '一般成人用手機實測約 20–23 顆。' },
@@ -646,8 +646,8 @@ function gloveSVG(c) {
     <path d="M90,160 L182,160 L184,200 Q182,224 160,226 L110,226 Q88,224 86,200 Z" fill="#000" opacity=".28"/>
     <path d="M98,172 h78 M98,186 h78 M100,200 h74 M104,214 h66" stroke="${seam}" stroke-width="1.6" stroke-dasharray="3 3" opacity=".55"/>
     <rect x="80" y="232" width="110" height="26" rx="6" fill="${cuff}"/>
-    <rect x="134" y="238" width="48" height="14" rx="3" fill="#1a1a1f"/><rect x="138" y="241" width="40" height="8" rx="2" fill="#777"/>
-    <text x="96" y="250" font-size="9" font-weight="800" fill="#fff" font-family="Arial" opacity=".9">${c.en}</text>
+    <rect x="152" y="238" width="32" height="14" rx="3" fill="#1a1a1f"/><rect x="156" y="241" width="24" height="8" rx="2" fill="#777"/>
+    <text x="86" y="249" font-size="7.5" font-weight="800" fill="#fff" font-family="Arial" opacity=".9" textLength="56" lengthAdjust="spacingAndGlyphs">${c.en}</text>
     <circle id="rtip" cx="34" cy="134" r="0"/>
   </g></svg>`;
 }
