@@ -86,12 +86,12 @@
   .hud { display: flex; gap: 18px; color: #888; font-size: 13px; }
   .hud b { color: #fff; font-size: 22px; display: block; font-variant-numeric: tabular-nums; }
   /* 關卡 3：接尺 */
-  .rstage { position: relative; width: min(320px, 88vw); height: 470px; overflow: hidden; }
+  .rstage { position: relative; width: min(320px, 88vw); height: 400px; overflow: hidden; }
   .rstage.live { touch-action: none; }
-  .rglove { position: absolute; left: 50%; bottom: 0; width: 280px; transform: translateX(-50%) translateX(10px); pointer-events: none; }
-  .rruler { position: absolute; left: 0; width: 30px; height: 265px; top: -265px; background: #f5d57a; border-radius: 4px; border: 2px solid #c9a94a; will-change: top; transition: opacity .2s; }
+  .rglove { position: absolute; left: 50%; bottom: 0; width: 240px; margin-left: -110px; pointer-events: none; }   /* 中心偏右 10px */
+  .rruler { position: absolute; left: 0; width: 40px; height: 218px; top: -218px; background: #f5d57a; border-radius: 4px; border: 2px solid #c9a94a; will-change: top; transition: opacity .2s; }
   .rruler i { position: absolute; left: 0; height: 2px; background: #6b5620; }
-  .rruler b { position: absolute; right: 4px; font-size: 8px; color: #4a3a10; transform: translateY(-5px); font-style: normal; }
+  .rruler b { position: absolute; right: 5px; font-size: 9px; color: #4a3a10; transform: translateY(-5px); font-style: normal; }
   .rstage.done .rruler { opacity: .3; }
   .rmsg { position: absolute; left: 0; right: 150px; top: 10px; text-align: center; font-size: 15px; color: #888; line-height: 1.4; }
   .rhit { position: absolute; inset: 0; }
@@ -652,17 +652,20 @@ function gloveSVG(c) {
   </g></svg>`;
 }
 const rstage = document.getElementById('rstage'), rruler = document.getElementById('rruler'), rmsg = document.getElementById('rmsg'), rglove = document.getElementById('rglove'), statusRuler = document.getElementById('statusRuler');
-const STG_RULER = stageById('ruler'), R_PX_CM = 6.3, R_G = 980, R_MAX_CM = 42, R_H = 265, R_SINK = 18;   // 尺底插進虎口 18px
+const STG_RULER = stageById('ruler'), R_PX_CM = 5.2, R_G = 980, R_MAX_CM = 42, R_H = 218, R_SINK = 22;   // 尺底插進虎口 22px
+const R_GW = 240, R_SCALE = R_GW / 270;   // 手套寬度與 viewBox 比例（位置用公式算，不量 DOM，iOS 才準）
 let rState = 'idle', rT0 = 0, rRaf = 0, rTimer = 0, rTop0 = -R_H;
 for (let cm = 0; cm <= R_MAX_CM; cm++) {
-  const i = document.createElement('i'); i.style.bottom = (cm * R_PX_CM) + 'px'; i.style.width = cm % 5 === 0 ? '15px' : '7px'; rruler.appendChild(i);
+  const i = document.createElement('i'); i.style.bottom = (cm * R_PX_CM) + 'px'; i.style.width = cm % 5 === 0 ? '18px' : '9px'; rruler.appendChild(i);
   if (cm % 5 === 0 && cm > 0) { const b = document.createElement('b'); b.style.bottom = (cm * R_PX_CM) + 'px'; b.textContent = cm; rruler.appendChild(b); }
 }
 function setupRuler() {
   rglove.innerHTML = gloveSVG(car);
-  const tip = document.getElementById('rtip').getBoundingClientRect(), gap = document.getElementById('rgap').getBoundingClientRect(), st = rstage.getBoundingClientRect();
-  rruler.style.left = (tip.left - st.left - 6) + 'px';
-  rTop0 = (tip.top - st.top) + R_SINK - R_H;
+  // 拇指尖在旋轉後的 viewBox 座標 (146,30)；手套左緣 = 區塊中心 - 110
+  const stW = rstage.clientWidth, stH = rstage.clientHeight;
+  const tipX = stW / 2 - 110 + 146 * R_SCALE, tipY = stH - 240 * R_SCALE + 30 * R_SCALE;
+  rruler.style.left = (tipX - 16) + 'px';
+  rTop0 = tipY + R_SINK - R_H;
   rruler.style.top = rTop0 + 'px';
 }
 function stopRuler() {
