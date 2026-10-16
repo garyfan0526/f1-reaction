@@ -74,7 +74,8 @@
   .lamp { width: 64px; height: 64px; border-radius: 50%; background: #2a2a30; border: 4px solid #111; transition: background .05s; }
   .col.on .lamp { background: #ff1e1e; box-shadow: 0 0 22px #ff1e1e, 0 0 50px #ff000080; }
   /* 關卡 2：燈板 */
-  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(340px, 88vw); background: #1a1a1f; padding: 14px; border-radius: 14px; box-shadow: 0 10px 40px #000; touch-action: none; }
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(340px, 88vw); background: #1a1a1f; padding: 14px; border-radius: 14px; box-shadow: 0 10px 40px #000; }
+  .board.live { touch-action: none; }
   .cell { aspect-ratio: 1; border-radius: 50%; background: #2a2a30; border: 4px solid #111; transition: background .04s; }
   .cell.on { background: #ff1e1e; box-shadow: 0 0 22px #ff1e1e, 0 0 50px #ff000080; }
   .cell.hit { background: #3ddc84; box-shadow: 0 0 18px #3ddc84; }
@@ -85,13 +86,14 @@
   .hud { display: flex; gap: 18px; color: #888; font-size: 13px; }
   .hud b { color: #fff; font-size: 22px; display: block; font-variant-numeric: tabular-nums; }
   /* 關卡 3：接尺 */
-  .rstage { position: relative; width: min(320px, 88vw); height: 400px; background: #15151a; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 40px #000; touch-action: none; }
-  .rglove { position: absolute; left: 50%; bottom: 10px; width: 280px; transform: translateX(-50%) translateX(10px); pointer-events: none; }
-  .rruler { position: absolute; left: 0; width: 34px; height: 420px; top: -420px; background: #f5d57a; border-radius: 4px; border: 2px solid #c9a94a; will-change: top; transition: opacity .2s; }
+  .rstage { position: relative; width: min(320px, 88vw); height: 470px; overflow: hidden; }
+  .rstage.live { touch-action: none; }
+  .rglove { position: absolute; left: 50%; bottom: 0; width: 280px; transform: translateX(-50%) translateX(10px); pointer-events: none; }
+  .rruler { position: absolute; left: 0; width: 30px; height: 265px; top: -265px; background: #f5d57a; border-radius: 4px; border: 2px solid #c9a94a; will-change: top; transition: opacity .2s; }
   .rruler i { position: absolute; left: 0; height: 2px; background: #6b5620; }
-  .rruler b { position: absolute; right: 5px; font-size: 9px; color: #4a3a10; transform: translateY(-5px); font-style: normal; }
+  .rruler b { position: absolute; right: 4px; font-size: 8px; color: #4a3a10; transform: translateY(-5px); font-style: normal; }
   .rstage.done .rruler { opacity: .3; }
-  .rmsg { position: absolute; left: 12px; right: 160px; top: 14px; text-align: center; font-size: 15px; color: #888; line-height: 1.4; }
+  .rmsg { position: absolute; left: 0; right: 150px; top: 10px; text-align: center; font-size: 15px; color: #888; line-height: 1.4; }
   .rhit { position: absolute; inset: 0; }
   #scrRuler .status { margin-top: 10px; min-height: 40px; }
   /* 階梯 */
@@ -585,7 +587,7 @@ const STG_BATAK = stageById('batak');
 const BATAK_SEC = 10;
 let bState = 'idle', bTimers = [], bLit = -1, bHits = 0, bMiss = 0, bEnd = 0, bRaf = 0;
 function hud() { document.getElementById('bkHits').textContent = bHits; document.getElementById('bkMiss').textContent = bMiss; }
-function stopBatak() { setBackLabel('batak', '回選單'); bTimers.forEach(clearTimeout); bTimers = []; cancelAnimationFrame(bRaf); cells.forEach(c => c.className = 'cell'); bLit = -1; bState = 'idle'; bHits = 0; bMiss = 0; hud(); document.getElementById('bkTime').textContent = BATAK_SEC.toFixed(1); statusBatak.innerHTML = '<span class="dim">按紅鍵開始，10 秒內點掉亮起的燈</span>'; renderLadder(STG_BATAK, 'ladderBatak', null); }
+function stopBatak() { setBackLabel('batak', '回選單'); board.classList.remove('live'); bTimers.forEach(clearTimeout); bTimers = []; cancelAnimationFrame(bRaf); cells.forEach(c => c.className = 'cell'); bLit = -1; bState = 'idle'; bHits = 0; bMiss = 0; hud(); document.getElementById('bkTime').textContent = BATAK_SEC.toFixed(1); statusBatak.innerHTML = '<span class="dim">按紅鍵開始，10 秒內點掉亮起的燈</span>'; renderLadder(STG_BATAK, 'ladderBatak', null); }
 function lightNext() {
   let n; do { n = Math.floor(Math.random() * 9); } while (n === bLit);
   cells.forEach(c => c.className = 'cell');
@@ -597,7 +599,7 @@ function startBatak() {
   const tick = () => {
     if (n > 0) { statusBatak.innerHTML = `<div class="time">${n}</div>`; n--; bTimers.push(setTimeout(tick, 700)); return; }
     statusBatak.innerHTML = '<div class="time ok">GO!</div>';
-    bState = 'run'; bEnd = performance.now() + BATAK_SEC * 1000; lightNext();
+    bState = 'run'; board.classList.add('live'); bEnd = performance.now() + BATAK_SEC * 1000; lightNext();
     const loop = () => {
       const left = Math.max(0, bEnd - performance.now());
       document.getElementById('bkTime').textContent = (left / 1000).toFixed(1);
@@ -609,15 +611,15 @@ function startBatak() {
   tick();
 }
 function finishBatak() {
-  bState = 'result'; cells.forEach(c => c.className = 'cell'); bLit = -1;
+  bState = 'result'; board.classList.remove('live'); cells.forEach(c => c.className = 'cell'); bLit = -1;
   const r = recordResult(STG_BATAK, bHits);
   const avg = bHits ? (BATAK_SEC / bHits).toFixed(2) : '--';
   statusBatak.innerHTML = stageResultHTML(STG_BATAK, bHits, r, bHits >= 29 ? 'ok' : bHits >= 20 ? '' : 'bad') + `<div class="dim" style="font-size:14px;margin-top:4px">平均 ${avg}s / 顆　·　誤點 ${bMiss}</div>`;
   renderLadder(STG_BATAK, 'ladderBatak', bHits);
 }
 board.addEventListener('pointerdown', e => {
-  e.preventDefault();
   if (bState !== 'run') return;
+  e.preventDefault();
   const cell = e.target.closest('.cell'); if (!cell) return;
   const i = +cell.dataset.i;
   if (i === bLit) { bHits++; cell.classList.add('hit'); lightNext(); }
@@ -650,28 +652,28 @@ function gloveSVG(c) {
   </g></svg>`;
 }
 const rstage = document.getElementById('rstage'), rruler = document.getElementById('rruler'), rmsg = document.getElementById('rmsg'), rglove = document.getElementById('rglove'), statusRuler = document.getElementById('statusRuler');
-const STG_RULER = stageById('ruler'), R_PX_CM = 10, R_G = 980, R_MAX_CM = 42;
-let rState = 'idle', rT0 = 0, rRaf = 0, rTimer = 0, rTop0 = -420;
+const STG_RULER = stageById('ruler'), R_PX_CM = 6.3, R_G = 980, R_MAX_CM = 42, R_H = 265, R_SINK = 18;   // 尺底插進虎口 18px
+let rState = 'idle', rT0 = 0, rRaf = 0, rTimer = 0, rTop0 = -R_H;
 for (let cm = 0; cm <= R_MAX_CM; cm++) {
-  const i = document.createElement('i'); i.style.bottom = (cm * R_PX_CM) + 'px'; i.style.width = cm % 5 === 0 ? '17px' : '8px'; rruler.appendChild(i);
+  const i = document.createElement('i'); i.style.bottom = (cm * R_PX_CM) + 'px'; i.style.width = cm % 5 === 0 ? '15px' : '7px'; rruler.appendChild(i);
   if (cm % 5 === 0 && cm > 0) { const b = document.createElement('b'); b.style.bottom = (cm * R_PX_CM) + 'px'; b.textContent = cm; rruler.appendChild(b); }
 }
 function setupRuler() {
   rglove.innerHTML = gloveSVG(car);
   const tip = document.getElementById('rtip').getBoundingClientRect(), gap = document.getElementById('rgap').getBoundingClientRect(), st = rstage.getBoundingClientRect();
-  rruler.style.left = (gap.left - st.left - 17) + 'px';
-  rTop0 = (tip.top - st.top) - 420;
+  rruler.style.left = (tip.left - st.left - 6) + 'px';
+  rTop0 = (tip.top - st.top) + R_SINK - R_H;
   rruler.style.top = rTop0 + 'px';
 }
 function stopRuler() {
-  cancelAnimationFrame(rRaf); clearTimeout(rTimer); rState = 'idle'; rstage.classList.remove('done');
+  cancelAnimationFrame(rRaf); clearTimeout(rTimer); rState = 'idle'; rstage.classList.remove('done'); rstage.classList.remove('live');
   rruler.style.top = rTop0 + 'px'; rmsg.textContent = '按紅鍵準備，尺掉下來立刻點畫面';
   document.getElementById('rkCm').textContent = '--'; document.getElementById('rkSec').textContent = '--';
   statusRuler.innerHTML = '<span class="dim">按紅鍵準備，尺掉下來立刻點畫面或按紅鍵</span>';
   setBackLabel('ruler', '回選單'); renderLadder(STG_RULER, 'ladderRuler', null);
 }
 function armRuler() {
-  stopRuler(); rState = 'armed'; rmsg.textContent = '準備…尺隨時會掉';
+  stopRuler(); rState = 'armed'; rstage.classList.add('live'); rmsg.textContent = '準備…尺隨時會掉';
   rTimer = setTimeout(() => {
     rState = 'falling'; rT0 = performance.now(); rmsg.textContent = '';
     const loop = () => {
@@ -684,7 +686,7 @@ function armRuler() {
   }, 1000 + Math.random() * 2500);
 }
 function finishRuler(ms) {
-  cancelAnimationFrame(rRaf); rState = 'result'; rstage.classList.add('done'); rmsg.textContent = '';
+  cancelAnimationFrame(rRaf); rState = 'result'; rstage.classList.add('done'); rstage.classList.remove('live'); rmsg.textContent = '';
   const r = recordResult(STG_RULER, ms);
   const cm = msToCm(ms);
   document.getElementById('rkCm').textContent = ms >= 293 ? '--' : cm.toFixed(1) + ' cm';
@@ -695,11 +697,11 @@ function finishRuler(ms) {
 function pressRuler() {
   if (!car) return;
   if (rState === 'idle' || rState === 'result') { armRuler(); return; }
-  if (rState === 'armed') { stopRuler(); rState = 'result'; rstage.classList.add('done'); statusRuler.innerHTML = '<span class="bad">太早了！</span><br><span class="dim">尺還沒掉就按。再按紅鍵重來</span>'; return; }
+  if (rState === 'armed') { stopRuler(); rState = 'result'; rstage.classList.remove('live'); rstage.classList.add('done'); statusRuler.innerHTML = '<span class="bad">太早了！</span><br><span class="dim">尺還沒掉就按。再按紅鍵重來</span>'; return; }
   if (rState === 'falling') finishRuler(Math.round(performance.now() - rT0));
 }
 wireRedButton(document.getElementById('rulerBtn'), pressRuler);
-document.getElementById('rhit').addEventListener('pointerdown', e => { e.preventDefault(); if (rState === 'falling' || rState === 'armed') pressRuler(); });
+document.getElementById('rhit').addEventListener('pointerdown', e => { if (rState === 'falling' || rState === 'armed') { e.preventDefault(); pressRuler(); } });
 
 // 紅鍵：pointerdown 觸發（比 click 早），滑動畫面不會誤觸
 function wireRedButton(btn, fn) {
