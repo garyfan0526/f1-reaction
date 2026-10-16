@@ -382,14 +382,14 @@ const STAGES = [
     norm: v => v,
     // 門檻為估計值（Batak 牆面成績扣掉手臂移動換算到手機），待實測校準
     tiers: [
-      { min: 40, max: Infinity, name: '外掛疑雲', desc: '比金氏紀錄換算到手機還快，像是用兩隻手。' },
-      { min: 33, max: 40, name: '裁判盯上你了', desc: '快到可疑，裁判要看重播。' },
-      { min: 28, max: 33, name: '金氏紀錄級', desc: 'Button 30 秒 58 顆（0.52s/顆），換算到手機約 0.32s/顆。' },
-      { min: 24, max: 28, name: 'F1 頂尖反應', desc: '車隊訓練前段班的水準。' },
-      { min: 20, max: 24, name: 'F1 車手水準', desc: '正規車手訓練常見成績。' },
-      { min: 16, max: 20, name: '一般人平均', desc: '一般成人在燈板上的換算水準。' },
-      { min: 12, max: 16, name: '慢半拍', desc: '看到燈才想動，手還沒跟上。' },
-      { min: 0,  max: 12, name: '還在找燈', desc: '多練幾次會進步，這很正常。' },
+      { min: 42, max: Infinity, name: '外掛疑雲', desc: '比金氏紀錄換算到手機還快，像是用兩隻手。' },
+      { min: 36, max: 42, name: '裁判盯上你了', desc: '快到可疑，裁判要看重播。' },
+      { min: 32, max: 36, name: '金氏紀錄級', desc: 'Button 30 秒 58 顆（0.52s/顆），換算到手機約 0.31s/顆。' },
+      { min: 28, max: 32, name: 'F1 頂尖反應', desc: '車隊訓練前段班的水準。' },
+      { min: 24, max: 28, name: 'F1 車手水準', desc: '正規車手訓練常見成績。' },
+      { min: 20, max: 24, name: '一般人平均', desc: '一般成人用手機實測約 20–23 顆。' },
+      { min: 15, max: 20, name: '慢半拍', desc: '看到燈才想動，手還沒跟上。' },
+      { min: 0,  max: 15, name: '還在找燈', desc: '多練幾次會進步，這很正常。' },
     ],
     range: t => t.max === Infinity ? `${t.min} 顆以上` : t.min === 0 ? `${t.max - 1} 顆以下` : `${t.min}–${t.max - 1} 顆`,
   },
@@ -446,6 +446,7 @@ function go(name) {
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => go('menu')));
+function setBackLabel(stageId, text) { const b = document.querySelector(`#${screens[stageId]} [data-back]`); if (b) { b.textContent = text; b.classList.toggle('solid', text !== '回選單'); b.classList.toggle('ghost', text === '回選單'); } }
 
 // ============ 選車 ============
 const overlay = document.getElementById('overlay');
@@ -484,7 +485,9 @@ function renderLadder(stage, elId, value) {
 }
 function stageResultHTML(stage, value, r, cls) {
   const t = stage.tiers[r.tier];
-  return `<div class="time ${cls}">${stage.fmtValue(value)}</div><span class="dim">${t.name}</span><div class="score">+${r.points} 分${r.isBest ? '　新最佳' : ''}　·　再按紅鍵重玩</div>`;
+  const pts = TIER_FLAG[r.tier] === 'dsq' ? '<span class="bad">不計分（判定作弊）</span>' : `+${r.points} 分${r.isBest ? '　新最佳' : ''}`;
+  setBackLabel(stage.id, '送出成績');
+  return `<div class="time ${cls}">${stage.fmtValue(value)}</div><span class="dim">${t.name}</span><div class="score">${pts}　·　再按紅鍵重玩</div>`;
 }
 
 // ============ 關卡 1：起跑反應 ============
@@ -494,7 +497,7 @@ let sState = 'idle', sTimers = [], lightsOutAt = 0;
 const STG_START = stageById('start');
 function clearS() { sTimers.forEach(clearTimeout); sTimers = []; }
 function setLights(n) { cols.forEach((c, i) => c.classList.toggle('on', i < n)); }
-function stopStart() { clearS(); setLights(0); sState = 'idle'; statusStart.innerHTML = '<span class="dim">按紅鍵開始，五燈熄滅瞬間再按</span>'; renderLadder(STG_START, 'ladderStart', null); }
+function stopStart() { clearS(); setLights(0); sState = 'idle'; setBackLabel('start', '回選單'); statusStart.innerHTML = '<span class="dim">按紅鍵開始，五燈熄滅瞬間再按</span>'; renderLadder(STG_START, 'ladderStart', null); }
 function startSeq() {
   clearS(); sState = 'lighting'; setLights(0);
   statusStart.innerHTML = '<span class="dim">準備…</span>';
@@ -530,7 +533,7 @@ const STG_BATAK = stageById('batak');
 const BATAK_SEC = 10;
 let bState = 'idle', bTimers = [], bLit = -1, bHits = 0, bMiss = 0, bEnd = 0, bRaf = 0;
 function hud() { document.getElementById('bkHits').textContent = bHits; document.getElementById('bkMiss').textContent = bMiss; }
-function stopBatak() { bTimers.forEach(clearTimeout); bTimers = []; cancelAnimationFrame(bRaf); cells.forEach(c => c.className = 'cell'); bLit = -1; bState = 'idle'; bHits = 0; bMiss = 0; hud(); document.getElementById('bkTime').textContent = BATAK_SEC.toFixed(1); statusBatak.innerHTML = '<span class="dim">按紅鍵開始，10 秒內點掉亮起的燈</span>'; renderLadder(STG_BATAK, 'ladderBatak', null); }
+function stopBatak() { setBackLabel('batak', '回選單'); bTimers.forEach(clearTimeout); bTimers = []; cancelAnimationFrame(bRaf); cells.forEach(c => c.className = 'cell'); bLit = -1; bState = 'idle'; bHits = 0; bMiss = 0; hud(); document.getElementById('bkTime').textContent = BATAK_SEC.toFixed(1); statusBatak.innerHTML = '<span class="dim">按紅鍵開始，10 秒內點掉亮起的燈</span>'; renderLadder(STG_BATAK, 'ladderBatak', null); }
 function lightNext() {
   let n; do { n = Math.floor(Math.random() * 9); } while (n === bLit);
   cells.forEach(c => c.className = 'cell');
@@ -557,7 +560,7 @@ function finishBatak() {
   bState = 'result'; cells.forEach(c => c.className = 'cell'); bLit = -1;
   const r = recordResult(STG_BATAK, bHits);
   const avg = bHits ? (BATAK_SEC / bHits).toFixed(2) : '--';
-  statusBatak.innerHTML = stageResultHTML(STG_BATAK, bHits, r, bHits >= 28 ? 'ok' : bHits >= 20 ? '' : 'bad') + `<div class="dim" style="font-size:14px;margin-top:4px">平均 ${avg}s / 顆　·　誤點 ${bMiss}</div>`;
+  statusBatak.innerHTML = stageResultHTML(STG_BATAK, bHits, r, bHits >= 32 ? 'ok' : bHits >= 24 ? '' : 'bad') + `<div class="dim" style="font-size:14px;margin-top:4px">平均 ${avg}s / 顆　·　誤點 ${bMiss}</div>`;
   renderLadder(STG_BATAK, 'ladderBatak', bHits);
 }
 board.addEventListener('pointerdown', e => {
