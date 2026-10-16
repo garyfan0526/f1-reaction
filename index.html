@@ -45,9 +45,9 @@
   .stages { display: grid; grid-template-columns: 1fr; gap: 12px; width: min(420px, 92vw); }
   .stage { background: #15151a; border: 2px solid #26262c; border-radius: 14px; padding: 14px 16px; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; }
   .stage:hover, .stage:active { border-color: #3ddc84; }
-  .stage .sn { font-size: 18px; font-weight: 700; color: #fff; }
-  .stage .sd { grid-column: 1; font-size: 12px; color: #777; }
-  .stage .sb { grid-row: 1 / span 2; text-align: right; font-size: 13px; color: #888; }
+  .stage .sn { grid-column: 1; grid-row: 1; font-size: 18px; font-weight: 700; color: #fff; }
+  .stage .sd { grid-column: 1; grid-row: 2; font-size: 12px; color: #777; }
+  .stage .sb { grid-column: 2; grid-row: 1 / span 2; text-align: right; font-size: 13px; color: #888; align-self: center; }
   .stage .sb b { display: block; font-size: 22px; color: #3ddc84; }
   .stage .sb .tn { color: #bbb; font-size: 12px; }
   .total { margin-top: 20px; text-align: center; color: #888; font-size: 14px; }
