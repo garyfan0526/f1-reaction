@@ -63,7 +63,9 @@
   }
   .start:active, .start.down { transform: translateY(3px); box-shadow: 0 0 0 7px #2a2a30, 0 0 0 10px #55555e, 0 4px 10px #000, inset 0 -2px 6px #5a0000, inset 0 6px 12px #3a0000; }
   .start small { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; opacity: .85; margin-top: 2px; }
-  .status { margin-top: 22px; font-size: 28px; min-height: 110px; text-align: center; }
+  .status { margin-top: 18px; font-size: 28px; min-height: 60px; text-align: center; }
+  #scrStart .start-wrap { margin-top: 34px; }
+  #scrBatak .status { margin-top: 12px; min-height: 40px; }
   .time { font-size: 64px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .score { font-size: 15px; color: #3ddc84; margin-top: 4px; }
   /* 關卡 1：五燈 */
@@ -72,11 +74,15 @@
   .lamp { width: 64px; height: 64px; border-radius: 50%; background: #2a2a30; border: 4px solid #111; transition: background .05s; }
   .col.on .lamp { background: #ff1e1e; box-shadow: 0 0 22px #ff1e1e, 0 0 50px #ff000080; }
   /* 關卡 2：燈板 */
-  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: min(270px, 66vw); background: #1a1a1f; padding: 12px; border-radius: 14px; box-shadow: 0 10px 40px #000; touch-action: none; }
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(340px, 88vw); background: #1a1a1f; padding: 14px; border-radius: 14px; box-shadow: 0 10px 40px #000; touch-action: none; }
   .cell { aspect-ratio: 1; border-radius: 50%; background: #2a2a30; border: 4px solid #111; transition: background .04s; }
   .cell.on { background: #ff1e1e; box-shadow: 0 0 22px #ff1e1e, 0 0 50px #ff000080; }
   .cell.hit { background: #3ddc84; box-shadow: 0 0 18px #3ddc84; }
-  .hud { display: flex; gap: 26px; margin-top: 10px; color: #888; font-size: 13px; }
+  .bk-row { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 14px; }
+  .bk-row .start-wrap { margin-top: 0; }
+  .bk-row .start { width: 84px; height: 84px; font-size: 14px; box-shadow: 0 0 0 5px #2a2a30, 0 0 0 8px #55555e, 0 8px 18px #000, inset 0 -5px 10px #5a0000, inset 0 3px 6px #ff9a9a80; }
+  .bk-row .start small { font-size: 9px; }
+  .hud { display: flex; gap: 18px; color: #888; font-size: 13px; }
   .hud b { color: #fff; font-size: 22px; display: block; font-variant-numeric: tabular-nums; }
   /* 階梯 */
   .ladder { margin-top: 18px; width: min(560px, 92vw); border-radius: 10px; overflow: hidden; border: 1px solid #26262c; }
@@ -108,7 +114,7 @@
   .namebox button { padding: 9px 16px; border-radius: 8px; border: 0; background: #3ddc84; color: #000; font-weight: 700; font-size: 15px; cursor: pointer; font-family: inherit; }
   #shot { display: none; } #shot.show { display: inline-block; }
   .sig { position: fixed; right: 10px; bottom: 6px; font-size: 10px; color: #555; }
-  @media (max-width: 520px) { .lamp { width: 44px; height: 44px; } .gantry { gap: 12px; padding: 16px; } .time { font-size: 48px; } body { padding-top: 14px; } h1 { margin-bottom: 8px; font-size: 20px; } #scrBatak .start-wrap, #scrStart .start-wrap { margin-top: 12px; } #scrBatak .start, #scrStart .start { width: 104px; height: 104px; font-size: 16px; } }
+  @media (max-width: 520px) { .lamp { width: 44px; height: 44px; } .gantry { gap: 12px; padding: 16px; } .time { font-size: 48px; } body { padding-top: 14px; } h1 { margin-bottom: 8px; font-size: 20px; } #scrStart .start-wrap { margin-top: 26px; } #scrStart .start { width: 104px; height: 104px; font-size: 16px; } }
 </style>
 </head>
 <body>
@@ -148,8 +154,10 @@
   <!-- 關卡 2：反應燈板 -->
   <section class="screen" id="scrBatak">
     <div class="board" id="board"></div>
-    <div class="hud"><div>剩餘<b id="bkTime">10.0</b></div><div>打中<b id="bkHits">0</b></div><div>誤點<b id="bkMiss">0</b></div></div>
-    <div class="start-wrap"><button class="start" id="batakBtn" aria-label="啟動">START<small>PUSH</small></button></div>
+    <div class="bk-row">
+      <div class="hud"><div>剩餘<b id="bkTime">10.0</b></div><div>打中<b id="bkHits">0</b></div><div>誤點<b id="bkMiss">0</b></div></div>
+      <div class="start-wrap"><button class="start" id="batakBtn" aria-label="啟動">START<small>PUSH</small></button></div>
+    </div>
     <div class="status" id="statusBatak"><span class="dim">按紅鍵開始，10 秒內點掉亮起的燈</span></div>
     <div class="row"><button class="btn ghost" data-back>回選單</button></div>
     <div class="ladder" id="ladderBatak"></div>
