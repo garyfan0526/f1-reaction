@@ -871,10 +871,27 @@ const SFX = (() => {
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.35, t + .08); g.gain.setValueAtTime(.35, t + dur); g.gain.exponentialRampToValueAtTime(.001, t + dur + .4);
     f.connect(g).connect(c.destination); noise(dur + .3, 400, 2500, .08);
   }
+  // 起步：連拉兩次再收尾。兩個略失諧的鋸齒波疊厚，低通跟著轉速走，不加噪音
+  function launch() {
+    if (muted) return; const c = ac(), t = c.currentTime;
+    const pts = [[0, 80], [.45, 320], [.75, 150], [1.15, 380], [1.5, 220], [2.4, 70]];   // [秒, Hz]
+    const f = c.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 2;
+    const g = c.createGain();
+    [0, 6].forEach(detune => {
+      const o = c.createOscillator(); o.type = 'sawtooth'; o.detune.value = detune;
+      o.frequency.setValueAtTime(pts[0][1], t);
+      pts.slice(1).forEach(([dt, hz]) => o.frequency.exponentialRampToValueAtTime(hz, t + dt));
+      const og = c.createGain(); og.gain.value = .45; o.connect(og).connect(f); o.start(t); o.stop(t + 2.6);
+    });
+    f.frequency.setValueAtTime(pts[0][1] * 5, t);
+    pts.slice(1).forEach(([dt, hz]) => f.frequency.exponentialRampToValueAtTime(hz * 5, t + dt));
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.32, t + .06); g.gain.setValueAtTime(.32, t + 1.6); g.gain.exponentialRampToValueAtTime(.001, t + 2.5);
+    f.connect(g).connect(c.destination);
+  }
   return {
     lamp:   () => tone(1100, .09, 'square', .2),                 // 起跑燈每亮一組
     rev:    () => rev(),                                          // 紅鍵：引擎拉轉
-    launch: () => rev(2.0, 55, 240, 1100, 300),                   // 熄燈後按下：低沉、約 2 秒的起步拉轉
+    launch,                                                       // 熄燈後按下：連拉兩次再收尾
     buzz:   () => tone(110, .45, 'sawtooth', .3, 70),             // 偷跑／太早
     beep:   () => tone(660, .12, 'square', .22),                  // 倒數 3-2-1
     go:     () => tone(1320, .25, 'square', .25),                 // GO
