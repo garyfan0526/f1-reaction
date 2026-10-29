@@ -404,7 +404,7 @@ const STAGES = [
     id: 'start', name: '起跑反應', desc: '五燈熄滅瞬間按下，測純反應時間', better: 'low',
     fmtValue: v => `${fmt(v)}s`,
     // 以顯示的百分位秒數分級（內部 ms 先四捨五入到 10ms）
-    norm: v => Math.round(v / 10) * 10,
+    norm: v => Math.round(Number(fmt(v)) * 1000),   // 用「畫面顯示的數字」反推，和顯示永遠一致（Math.round 會把 245 進成 250，但 toFixed 顯示 0.24）
     tiers: [
       { ...P(0, 'dsq'), min: 0,   max: 100, name: '超越人類極限', desc: '比燈還快，F1 會直接判偷跑。你大概是猜的。' },
       { ...P(50, 'sus'), min: 100, max: 150, name: '裁判盯上你了', desc: '比 Hamilton 2026 美國站的 0.15s 還快，裁判會看重播。Bottas 2017 奧地利 0.201s 就因為燈亮時有小動作被質疑，最後判合法。' },
